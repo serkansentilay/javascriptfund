@@ -253,3 +253,305 @@
 //let b = prompt("Second number?", 2);
 //alert(+a + +b); // 3
 
+
+
+//logical operators
+
+//alert( true || true );   // true
+//alert( false || true );  // true
+//alert( true || false );  // true
+//alert( false || false ); // false
+
+//If an operand is not a boolean, it’s converted to a boolean for the evaluation.
+//true false olarak islem yapiyor
+//if (1 || 0) { // works just like if( true || false )
+//  alert( 'truthy!' );
+//}
+
+//let hour = 9;
+
+//if (hour < 10 || hour > 18) {
+//  alert( 'The office is closed.' );
+//}
+
+//let hour = 12;
+//let isWeekend = true;
+
+//if (hour < 10 || hour > 18 || isWeekend) {
+//  alert( 'The office is closed.' ); // it is the weekend
+//}
+
+//The OR || operator does the following:
+
+//Evaluates operands from left to right.
+//For each operand, converts it to boolean. If the result is true, stops and returns 
+// the original value of that operand.
+//If all operands have been evaluated (i.e. all were false), returns the last operand.
+//OR // operatörü aşağıdakileri yapar:
+//İşlenenleri soldan sağa doğru değerlendirir.
+//Her işlenen için onu boolean değerine dönüştürür. Sonuç doğruysa, o işlenenin orijinal 
+// değerini durdurur ve döndürür.
+//Tüm işlenenler değerlendirilmişse (yani hepsi yanlışsa), son işleneni döndürür.
+
+//alert( 1 || 0 ); // 1 (1 is truthy)
+//alert( null || 1 ); // 1 (1 is the first truthy value)
+//alert( null || 0 || 1 ); // 1 (the first truthy value)
+//alert( undefined || null || 0 ); // 0 (all falsy, returns the last value)
+
+//let’s use OR || to choose the one that has the data and show it (or "Anonymous" if nothing set):
+
+// let firstName = "";
+//let lastName = "";
+//let nickName = "SuperCoder";
+
+//alert( firstName || lastName || nickName || "Anonymous"); // SuperCoder
+//If all variables were falsy, "Anonymous" would show up.
+
+//The importance of this feature becomes obvious if an operand isn’t just a value,
+//  but an expression with a side effect, such as a variable assignment or a function call.
+//In the example below, only the second message is printed:
+// true || alert("not printed");
+//false || alert("printed");
+//In the first line, the OR || operator stops the evaluation immediately upon seeing true, so the alert isn’t run.
+
+//In classical programming, AND returns true if both operands are truthy and false otherwise:
+// alert( true && true );   // true
+//alert( false && true );  // false
+//alert( true && false );  // false
+//alert( false && false ); // false
+
+//if (1 && 0) { // evaluated as true && false
+//  alert( "won't work, because the result is falsy" );
+//}
+
+//The AND && operator does the following:
+
+//Evaluates operands from left to right.
+//For each operand, converts it to a boolean. If the result is false, stops and returns 
+// the original value of that operand.
+//If all operands have been evaluated (i.e. all were truthy), returns the last operand.
+//In other words, AND returns the first falsy value or the last value if none were found.
+
+// || or da ilk once true dogru olanlar basa koyulur hemen bulur islem biter
+// && ve de ilk once false olanlari koyariz hemen bulur islem biter
+
+// if the first operand is truthy,
+// AND returns the second operand:
+//alert( 1 && 0 ); // 0
+//alert( 1 && 5 ); // 5
+
+// if the first operand is falsy,
+// AND returns it. The second operand is ignored
+//alert( null && 5 ); // null
+//alert( 0 && "no matter what" ); // 0
+
+//When all values are truthy, the last value is returned:
+// alert( 1 && 2 && 3 ); // 3, the last one
+
+//The precedence of AND && operator is higher than OR ||.
+//So the code a && b || c && d is essentially the same as if the && expressions were in parentheses:
+//  (a && b) || (c && d).
+
+//Don’t replace if with || or &&
+//Sometimes, people use the AND && operator as a “shorter way to write if”.
+
+//let x = 1;
+//(x > 0) && alert( 'Greater than zero!' );
+
+//the action in the right part of && would execute only if the evaluation reaches it. 
+// That is, only if (x > 0) is true.
+//So we basically have an analogue for:
+// let x = 1;
+//if (x > 0) alert( 'Greater than zero!' );
+//Although, the variant with && appears shorter, if is more obvious and tends to be 
+// a little bit more readable. So we recommend using every construct for its purpose: 
+// use if if we want if and use && if we want AND.
+
+//!NOT 
+//Converts the operand to boolean type: true/false.
+//Returns the inverse value.
+
+//alert( !true ); // false
+//alert( !0 ); // true
+
+//A double NOT !! is sometimes used for converting a value to boolean type:
+
+//alert( !!"non-empty string" ); // true
+//alert( !!null ); // false
+
+//That is, the first NOT converts the value to boolean and returns the inverse, 
+// and the second NOT inverses it again. In the end, we have a plain value-to-boolean conversion.
+
+//alert( Boolean("non-empty string") ); // true
+//alert( Boolean(null) ); // false
+//The precedence of NOT ! is the highest of all logical operators, so it always executes first, before && or ||.
+
+//first 1, then 2.
+
+//alert( alert(1) || 2 || alert(3) );
+//The call to alert does not return a value. Or, in other words, it returns undefined.
+//The first OR || evaluates its left operand alert(1). That shows the first message with 1.
+//The alert returns undefined, so OR goes on to the second operand searching for a truthy value.
+//The second operand 2 is truthy, so the execution is halted, 2 is returned and then shown by the outer alert.
+//There will be no 3, because the evaluation does not reach alert(3).
+
+// 1, and then undefined.
+// alert( alert(1) && alert(2) );
+//The call to alert returns undefined (it just shows a message, so there’s no meaningful return).
+//Because of that, && evaluates the left operand (outputs 1), and immediately stops, because 
+// undefined is a falsy value. And && looks for a falsy value and returns it, so it’s done
+
+//alert( null || 2 && 3 || 4 );
+//The precedence of AND && is higher than ||, so it executes first.
+//The result of 2 && 3 = 3, so the expression becomes:
+//null || 3 || 4
+//Now the result is the first truthy value: 3.
+
+// Runs.
+// The result of -1 || 0 = -1, truthy
+//if (-1 || 0) alert( 'first' );
+
+// Doesn't run
+// -1 && 0 = 0, falsy
+//if (-1 && 0) alert( 'second' );
+
+// Executes
+// Operator && has a higher precedence than ||
+// so -1 && 1 executes first, giving us the chain:
+// null || -1 && 1  ->  null || 1  ->  1
+//if (null || -1 && 1) alert( 'third' );
+
+//let userName = prompt("Who's there?", '');
+
+//if (userName === 'Admin') {
+
+//  let pass = prompt('Password?', '');
+
+//  if (pass === 'TheMaster') {
+//    alert( 'Welcome!' );
+//  } else if (pass === '' || pass === null) {
+//    alert( 'Canceled' );
+ // } else {
+//    alert( 'Wrong password' );
+//  }
+
+//} else if (userName === '' || userName === null) {
+//  alert( 'Canceled' );
+//} else {
+//  alert( "I don't know you" );
+//}
+
+//-1 bir sayıdır ve JavaScript'te tüm sayılar (0 hariç) truthy kabul edilir.
+//0 ise falsy bir değerdir.
+
+
+//The nullish coalescing operator is written as two question marks ??.
+
+//As it treats null and undefined similarly, we’ll use a special term here, in this article. For brevity, we’ll say that a value is “defined” when it’s neither null nor undefined.
+
+//The result of a ?? b is:
+
+//if a is defined, then a,
+//if a isn’t defined, then b.
+
+//In other words, ?? returns the first argument if it’s not null/undefined. Otherwise, the second one.
+
+//result = (a !== null && a !== undefined) ? a : b;
+//Now it should be absolutely clear what ?? does. Let’s see where it helps.
+//The common use case for ?? is to provide a default value.
+//For example, here we show user if its value isn’t null/undefined, otherwise Anonymous:
+// let user;
+//alert(user ?? "Anonymous"); // Anonymous (user is undefined)
+
+//let user = "John";
+//alert(user ?? "Anonymous"); // John (user is not null/undefined)
+
+//let firstName = null;
+//let lastName = null;
+//let nickName = "Supercoder";
+
+// shows the first defined value:
+//alert(firstName ?? lastName ?? nickName ?? "Anonymous"); // Supercoder
+
+//in the code above we could replace ?? with || and still get the same result:
+
+// let firstName = null;
+//let lastName = null;
+//let nickName = "Supercoder";
+
+// shows the first truthy value:
+//alert(firstName || lastName || nickName || "Anonymous"); // Supercoder
+
+
+//The important difference between them is that:
+
+//|| returns the first truthy value.
+//?? returns the first defined value.
+//In other words, || doesn’t distinguish between false, 0, an empty string "" and null/undefined.
+//  They are all the same – falsy values. If any of these is the first argument of ||, then we’ll 
+// get the second argument as the result.
+
+//In practice though, we may want to use default value only when the variable is null/undefined. 
+// That is, when the value is really unknown/not set.
+
+//Aralarındaki önemli fark şudur:
+
+// ilk doğru değeri döndürür.
+//?? tanımlanan ilk değeri döndürür.
+//Başka bir deyişle, // false, 0, boş bir dize "" ile null / undefined arasında ayrım yapmaz. 
+// Hepsi aynı - sahte değerler. Bunlardan herhangi biri //'nin ilk argümanı ise, sonuç olarak 
+// ikinci argümanı elde ederiz.
+
+//Ancak pratikte, varsayılan değeri yalnızca değişken null / tanımsız olduğunda kullanmak 
+// isteyebiliriz. Yani, değer gerçekten bilinmediğinde / ayarlanmadığında.
+
+//let height = 0;
+
+//alert(height || 100); // 100
+//alert(height ?? 100); // 0
+//The height || 100 checks height for being a falsy value, and it’s 0, falsy indeed.
+//so the result of || is the second argument, 100.
+//The height ?? 100 checks height for being null/undefined, and it’s not,
+//so the result is height “as is”, that is 0.
+
+//The precedence of the ?? operator is the same as ||. They both equal 3 in the MDN table.
+//That means that, just like ||, the nullish coalescing operator ?? is evaluated before = and ?, 
+// but after most other operations, such as +, *.
+//So we may need to add parentheses in expressions like this:
+
+//let height = null;
+//let width = null;
+
+// important: use parentheses
+//let area = (height ?? 100) * (width ?? 50);
+
+//alert(area); // 5000
+
+//Otherwise, if we omit parentheses, then as * has the higher precedence than ??,
+//  it would execute first, leading to incorrect results.
+
+// without parentheses
+//let area = height ?? 100 * width ?? 50;
+
+// ...works this way (not what we want):
+//let area = height ?? (100 * width) ?? 50;
+
+//Due to safety reasons, JavaScript forbids using ?? together with && and || operators,
+//  unless the precedence is explicitly specified with parentheses.
+
+//The code below triggers a syntax error:
+
+// let x = 1 && 2 ?? 3; // Syntax error
+//The limitation is surely debatable, it was added to the language specification with 
+// the purpose to avoid programming mistakes, when people start to switch from || to ??.
+
+//Use explicit parentheses to work around it:
+
+// let x = (1 && 2) ?? 3; // Works
+
+//alert(x); // 2
+
+//The operator ?? has a very low precedence, only a bit higher than ? and =, 
+// so consider adding parentheses when using it in an expression.
+
+//It’s forbidden to use it with || or && without explicit parentheses.
