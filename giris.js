@@ -56,3 +56,43 @@
 
 //alert( isBoss ); // true if OK is pressed
 
+//son incelikler
+
+//That’s called “automatic semicolon insertion”. Sometimes it doesn’t work, for instance:
+
+// alert("There will be an error after this message")
+
+//[1, 2].forEach(alert)
+
+
+//Semicolons are not required after code blocks {...} and syntax constructs with them like loops:
+
+//function f() {
+  // no semicolon needed after function declaration
+//}
+
+//for(;;) {
+  // no semicolon needed after the loop
+//}
+//…But even if we can put an “extra” semicolon somewhere, that’s not an error. It will be ignored.
+
+
+//To fully enable all features of modern JavaScript, we should start scripts with "use strict".
+//The directive must be at the top of a script or at the beginning of a function body.
+//Without "use strict", everything still works, but some features behave in the old-fashioned, “compatible” way.
+//  We’d generally prefer the modern behavior.
+//"use strict" olmadan her şey hala çalışır, ancak bazı özellikler eski moda, "uyumlu" şekilde davranır. 
+// Genellikle modern davranışı tercih ederiz.
+//Some modern features of the language (like classes that we’ll study in the future) enable strict mode implicitly.
+
+//All these functions are modal, they pause the code execution and prevent the visitor from interacting with the page until they answer.
+//let userName = prompt("Your name?", "Alice");
+//let isTeaWanted = confirm("Do you want some tea?");
+//alert( "Visitor: " + userName ); // Alice
+//alert( "Tea wanted: " + isTeaWanted ); // true
+
+
+
+
+
+
