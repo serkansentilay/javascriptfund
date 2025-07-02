@@ -95,4 +95,29 @@
 
 
 
+// Debugging in the browser
+//code hata ayiklama
+//We can also pause the code by using the debugger command in it, like this:
+
+//function hello(name) { 
+//  let phrase = `Hello, ${name}!`;
+
+  //debugger;  // <-- the debugger stops here
+
+//  say(phrase);
+//}
+
+//function say(phrase){ phrase="jogn"
+//    alert(`** ${phrase} **`)
+//}
+//Such command works only when the development tools are open, otherwise the browser ignores it.
+
+// open console to see
+//for (let i = 0; i < 5; i++) {
+//  console.log("value,", i);
+//}
+
+//hata ayiklamada chrome dan cmd+option+c ile sourcesa ulas oradan sag taraftaki panellerden test edebilirsin
+
+
 
