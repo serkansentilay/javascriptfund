@@ -31,6 +31,28 @@
 //alert( Boolean(b) ); // true
 //alert(a == b); // true!
 
+/*
+truthy ve Falsy Değerler
+
+🔴 Falsy Olanlar (sadece 7 tanedir):
+Değer	Açıklama
+false	Boolean false
+0	Sayısal sıfır
+-0	Negatif sıfır
+0n	BigInt sıfır
+""	Boş string
+null	Boş değer
+undefined	Tanımsız
+NaN	Sayı değil
+Bunlar haricindeki her şey truthy kabul edilir.
+✅ Örnek Truthy Değerler:
+Boolean("1")         // true (non-empty string)
+Boolean("false")     // true (hala bir string)
+Boolean([])          // true (boş array bile truthy)
+Boolean({})          // true (boş object de truthy)
+Boolean(42)          // true (sıfır olmayan sayı)
+*/
+
 //A regular equality check == has a problem. It cannot differentiate 0 from false:
 
 // alert( 0 == false ); // true
@@ -39,10 +61,23 @@
 // alert( '' == false ); // true
 //This happens because operands of different types are converted to numbers by the equality operator ==.
 //  An empty string, just like false, becomes a zero.
+/*
+Neden true döndü?
+Çünkü == operatörü iki değeri kendi türlerine dönüştürerek karşılaştırır.
+
+Karşılaştırma	Ne Oluyor?
+0 == false	false → 0 olur ⇒ 0 == 0 ⇒ true
+'' == false	'' → 0, false → 0 ⇒ 0 == 0 ⇒ true
+🔸 Yani == tip farkını önemsemez. Bu nedenle beklenmeyen sonuçlar doğurabilir.
+
+
+*/
+
 
 //What to do if we’d like to differentiate 0 from false?
 
 //A strict equality operator === checks the equality without type conversion.
+//Tipler farklıysa, hiç dönüştürmeden direkt false döner.
 
 //In other words, if a and b are of different types, then a === b immediately returns false without 
 // an attempt to convert them.
@@ -63,6 +98,16 @@
 // but not any other value.
 
 // alert( null == undefined ); // true
+
+/*
+== kullandığında: null ve undefined birbirine eşittir, ama başka hiçbir şeye eşit değildir.
+=== kullandığında: Tipleri farklı olduğu için false.
+Karşılaştırma	Sonuç	Neden?
+null == undefined	true	JavaScript özel kuralıyla eşit
+null === undefined	false	Biri null, diğeri undefined
+
+*/
+
 
 //For maths and other comparisons < > <= >=
 //null/undefined are converted to numbers: null becomes 0, while undefined becomes NaN.
@@ -92,7 +137,8 @@
 //alert( undefined == 0 ); // false (3)
 //Why does it dislike zero so much? Always false!
 //We get these results because:
-//Comparisons (1) and (2) return false because undefined gets converted to NaN and NaN is a special numeric value which returns false for all comparisons.
+//Comparisons (1) and (2) return false because undefined gets converted to NaN and NaN is a special 
+// numeric value which returns false for all comparisons.
 //The equality check (3) returns false because undefined only equals null, undefined, and no other value.
 
 //Treat any comparison with undefined/null except the strict equality === with exceptional care.
