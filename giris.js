@@ -76,6 +76,11 @@
 //}
 //…But even if we can put an “extra” semicolon somewhere, that’s not an error. It will be ignored.
 
+//return  // ← burada alt satıra geçersen hata çıkarabilir
+//  5;
+//Bu durumda JavaScript return deyiminin bitmiş olduğunu zanneder ve undefined döndürür.
+
+
 
 //To fully enable all features of modern JavaScript, we should start scripts with "use strict".
 //The directive must be at the top of a script or at the beginning of a function body.
