@@ -310,7 +310,9 @@ Now catch became a single place for all error handling: both for JSON.parse and 
 /*
 Rethrowing
 
-In the example above we use try...catch to handle incorrect data. But is it possible that another unexpected error occurs within the try {...} block? Like a programming error (variable is not defined) or something else, not just this “incorrect data” thing.
+In the example above we use try...catch to handle incorrect data. But is it possible that 
+another unexpected error occurs within the try {...} block? Like a programming error
+ (variable is not defined) or something else, not just this “incorrect data” thing.
 
 For example:
 
@@ -324,9 +326,12 @@ try {
   alert("JSON Error: " + err); // JSON Error: ReferenceError: user is not defined
   // (no JSON Error actually)
 }
-Of course, everything’s possible! Programmers do make mistakes. Even in open-source utilities used by millions for decades – suddenly a bug may be discovered that leads to terrible hacks.
+Of course, everything’s possible! Programmers do make mistakes. Even in open-source 
+utilities used by millions for decades – suddenly a bug may be discovered that leads to terrible hacks.
 
-In our case, try...catch is placed to catch “incorrect data” errors. But by its nature, catch gets all errors from try. Here it gets an unexpected error, but still shows the same "JSON Error" message. That’s wrong and also makes the code more difficult to debug.
+In our case, try...catch is placed to catch “incorrect data” errors. But by its nature, 
+catch gets all errors from try. Here it gets an unexpected error, but still shows the same 
+"JSON Error" message. That’s wrong and also makes the code more difficult to debug.
 
 To avoid such problems, we can employ the “rethrowing” technique. The rule is simple:
 
@@ -346,7 +351,8 @@ Usually, we can check the error type using the instanceof operator:
     alert('ReferenceError'); // "ReferenceError" for accessing an undefined variable
   }
 }
-We can also get the error class name from err.name property. All native errors have it. Another option is to read err.constructor.name.
+We can also get the error class name from err.name property. All native errors have it. 
+Another option is to read err.constructor.name.
 
 
 */
@@ -455,7 +461,8 @@ The finally clause is a great place to finish the measurements no matter what.
 */
 
 /*
-Here finally guarantees that the time will be measured correctly in both situations – in case of a successful execution of fib and in case of an error in it:
+Here finally guarantees that the time will be measured correctly in both 
+situations – in case of a successful execution of fib and in case of an error in it:
 
  let num = +prompt("Enter a positive integer number?", 35)
 
@@ -500,7 +507,8 @@ Otherwise, if we declared let in try block, it would only be visible inside of i
 finally and return
 The finally clause works for any exit from try...catch. That includes an explicit return.
 
-In the example below, there’s a return in try. In this case, finally is executed just before the control returns to the outer code.
+In the example below, there’s a return in try. In this case, finally is executed 
+just before the control returns to the outer code.
 
  function func() {
 
@@ -532,6 +540,7 @@ Kullanım amacı: Genellikle kaynakları serbest bırakmak, temizlik yapmak, sü
 finally bloğu, try ve catch bloklarından sonra, fonksiyonun nasıl bittiğine bakmaksızın çalışır.
 Bu yüzden önce finally içindeki alert çalışır, sonra fonksiyonun dönüş değeri ekrana yazılır.
 Bu davranış, kodun güvenli ve öngörülebilir şekilde tamamlanmasını sağlar.
+finally, return, throw, await, catch gibi şeylerden sonra da garantili çalışır.
 
 */
 
@@ -572,11 +581,16 @@ Global catch
 Environment-specific
 The information from this section is not a part of the core JavaScript.
 
-Let’s imagine we’ve got a fatal error outside of try...catch, and the script died. Like a programming error or some other terrible thing.
+Let’s imagine we’ve got a fatal error outside of try...catch, and the script died. 
+Like a programming error or some other terrible thing.
 
-Is there a way to react on such occurrences? We may want to log the error, show something to the user (normally they don’t see error messages), etc.
+Is there a way to react on such occurrences? We may want to log the error, show 
+something to the user (normally they don’t see error messages), etc.
 
-There is none in the specification, but environments usually provide it, because it’s really useful. For instance, Node.js has process.on("uncaughtException") for that. And in the browser we can assign a function to the special window.onerror property, that will run in case of an uncaught error.
+There is none in the specification, but environments usually provide it, because 
+it’s really useful. For instance, Node.js has process.on("uncaughtException") for 
+that. And in the browser we can assign a function to the special window.onerror 
+property, that will run in case of an uncaught error.
 
 The syntax:
 
@@ -764,13 +778,17 @@ Also it’s important that if catch meets an unknown error, then it rethrows it 
 line (**). The catch block only knows how to handle validation and syntax errors, 
 other kinds (caused by a typo in the code or other unknown reasons) should fall through.
 
+//instanceof daha iyi
 
 */
 
-/*
+/* 
 Further inheritance
 
-The ValidationError class is very generic. Many things may go wrong. The property may be absent or it may be in a wrong format (like a string value for age instead of a number). Let’s make a more concrete class PropertyRequiredError, exactly for absent properties. It will carry additional information about the property that’s missing.
+The ValidationError class is very generic. Many things may go wrong. The property may be
+ absent or it may be in a wrong format (like a string value for age instead of a number). 
+ Let’s make a more concrete class PropertyRequiredError, exactly for absent properties. 
+ It will carry additional information about the property that’s missing.
 
  class ValidationError extends Error {
   constructor(message) {
@@ -826,9 +844,9 @@ Please note that this.name in PropertyRequiredError constructor is again assigne
  this.name = this.constructor.name. And then inherit all our custom errors from it.
 
 
-*/
 
-/*
+
+
 Let’s call it MyError.
 
 Here’s the code with MyError and other custom error classes, simplified:
@@ -837,6 +855,7 @@ Here’s the code with MyError and other custom error classes, simplified:
   constructor(message) {
     super(message);
     this.name = this.constructor.name;
+    //hata sınıfının adını otomatik atıyor.
   }
 }
 
@@ -846,6 +865,10 @@ class PropertyRequiredError extends ValidationError {
   constructor(property) {
     super("No property: " + property);
     this.property = property;
+
+    //message: "No property: age" gibi, üst sınıfa geçilir.
+    //</class>this.property: Hangi özelliğin eksik olduğunu belirtir (örneğin "age").
+
   }
 }
 
@@ -853,7 +876,7 @@ class PropertyRequiredError extends ValidationError {
 alert( new PropertyRequiredError("field").name ); // PropertyRequiredError
 Now custom errors are much shorter, especially ValidationError, as we got 
 rid of the "this.name = ..." line in the constructor.
-*/
+ */
 
 /*
 
