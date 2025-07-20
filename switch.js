@@ -147,3 +147,6 @@
 //}
 
 
+//switch deyiminde gelen değer herhangi bir türde olabilir — string, number, boolean vs.
+//Ama karşılaştırma işlemi === (strict equality) ile yapılır. Yani tipler de eşit olmalı.
+
