@@ -88,7 +88,8 @@
 //alert(user + 500); // toString -> John500
 
 //Further conversions
-//As we know already, many operators and functions perform type conversions, e.g. multiplication * converts operands to numbers.
+//As we know already, many operators and functions perform type conversions, e.g. 
+// multiplication * converts operands to numbers.
 //If we pass an object as an argument, then there are two stages of calculations:
 //The object is converted to a primitive (using the rules described above).
 //If necessary for further calculations, the resulting primitive is also converted.
