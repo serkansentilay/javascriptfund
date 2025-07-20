@@ -1,6 +1,6 @@
 //classs
+/* 
 
-/*
 The constructor() method is called automatically by new, so we can initialize the object there.
 
 For example:
@@ -26,8 +26,16 @@ A new object is created.
 The constructor runs with the given argument and assigns it to this.name.
 …Then we can call object methods, such as user.sayHi().
 
+User adında bir sınıf tanımlanmış.
+Sınıfın içinde bir constructor metodu var. Bu, new ile nesne oluşturulunca otomatik çalışır 
+ve nesnenin özelliklerini başlatır (örneğin, name).
+Sınıfa bir de sayHi metodu eklenmiş. Bu metod, nesnenin adını ekrana yazdırıyor.
 
-*/
+Sınıflar, benzer özellik ve davranışlara sahip nesneleri kolayca oluşturmak için kullanılır.
+constructor ile nesneye ilk değerler atanır.
+Sınıfın metodları (sayHi gibi) ile nesneye davranışlar eklenir.
+
+ */
 
 /*
 class User {
@@ -48,8 +56,8 @@ just as described in the chapter F.prototype. So the object has access to class 
 
 */
 
-/*
-class User {
+
+/* class User {
   constructor(name) { this.name = name; }
   sayHi() { alert(this.name); }
 }
@@ -65,9 +73,9 @@ alert(User.prototype.sayHi); // the code of the sayHi method
 
 // there are exactly two methods in the prototype
 alert(Object.getOwnPropertyNames(User.prototype)); // constructor, sayHi
-*/
+ */
 
-/*
+/* 
 Not just a syntactic sugar
 
 Sometimes people say that class is a “syntactic sugar” (syntax that is designed to make things easier to read, but doesn’t introduce anything new), because we could actually declare the same thing without using the class keyword at all:
@@ -127,8 +135,8 @@ Besides, class syntax brings many other features that we’ll explore later.
 
 
 */
-
-/*
+/* 
+   
 Class Expression
 
 Just like functions, classes can be defined inside another expression, passed around, returned,
@@ -171,7 +179,13 @@ We can even make classes dynamically “on-demand”, like this:
 let User = makeClass("Hello");
 
 new User().sayHi(); // Hello
-*/
+ 
+ 
+Class Expression: Sınıfı bir değişkene atayarak, kodun daha esnek ve dinamik olmasını sağlar. Özellikle fonksiyonel programlama ve dinamik nesne üretimi için kullanışlıdır.
+Named Class Expression: Sınıfın içinde hata ayıklama veya kendini referanslama için isim kullanılabilir, ama bu isim dışarıdan erişilemez.
+Dinamik Sınıf: Fonksiyonlar aracılığıyla, parametreye göre farklı sınıflar üretmek mümkündür. Bu, fabrika fonksiyonları veya özel davranışlar için çok kullanışlıdır.
+ */
+
 
 
 /*
@@ -186,6 +200,7 @@ Here’s an example for user.name implemented using get/set:
   constructor(name) {
     // invokes the setter
     this.name = name;
+    //satırı aslında doğrudan bir property ataması gibi görünse de, altta bir setter tanımlı olduğu için set name(value) fonksiyonu tetiklenir.
   }
 
   get name() {
@@ -211,26 +226,46 @@ Technically, such class declaration works by creating getters and setters in Use
 
 */
 
+
 /*
-Computed names […]
+
+Getter ve setter'lar, User.prototype üzerinde tanımlanır. Yani, tüm User nesneleri bu özellikleri paylaşır.
+_name property’si genellikle "protected" gibi davranır; dışarıdan doğrudan erişilmemesi önerilir (ama dil tarafından zorlanmaz).
+Bu yapı, veri doğrulama ve kapsülleme (encapsulation) için çok kullanışlıdır.
+Kapsülleme: Dışarıdan doğrudan property’ye erişimi engelleyip, kontrol ekleyebilirsin.
+Doğrulama: Setter ile gelen veriyi kontrol edebilir, hatalıysa uyarı verebilirsin.
+Okunabilirlik: user.name gibi doğal bir sözdizimiyle çalışır, fonksiyon gibi çağırmaya gerek yoktur.
+Sınıflarda getter/setter ile property’lere erişimi ve atamayı kontrol edebilirsin.
+Doğrudan property yerine, arka planda başka bir property (_name) kullanılır.
+Bu sayede hem veri güvenliği hem de esneklik sağlanır.
+JavaScript’te gerçek “protected” veya “private” alanlar uzun süre yoktu. Alt tire, geliştiriciler arasında “bu property’ye doğrudan erişme, setter/getter ile eriş” anlamında bir uyarıdır.
+Getter/setter ile dışarıya kontrollü bir erişim sağlanır. Örneğin, set name(value) ile gelen değeri doğrulayabilir, get name() ile okunmasını sağlayabilirsin.
+_name gibi bir alan, doğrudan dışarıdan değiştirilmemeli; çünkü veri doğrulama, kapsülleme (encapsulation) ve güvenlik için setter/getter kullanılır.
+Alt tireli isimler, kodun okunabilirliğini artırır ve hangi alanların “internal” olduğunu gösterir.
+*/
+
+
+
+/* Computed names […]
 
 Here’s an example with a computed method name using brackets [...]:
+hesaplanmış/metinsel metod isimleri 
 
  class User {
 
   ['say' + 'Hi']() {
     alert("Hello");
   }
-
+//Burada 'say' + 'Hi' ifadesi "sayHi" stringine dönüşür.
 }
 
 new User().sayHi();
 Such features are easy to remember, as they resemble that of literal objects.
-*/
+ */
 
 
-/*
-“Class fields” is a syntax that allows to add any properties.
+
+/* “Class fields” is a syntax that allows to add any properties.
 
 For instance, let’s add name property to class User:
 
@@ -262,9 +297,18 @@ We can also assign values using more complex expressions and function calls:
 }
 
 let user = new User();
-alert(user.name); // John
+alert(user.name); // John */
+
+/*
+name = "John"	Bir class field (özellik) tanımıdır.
+Bu alan constructor yerine doğrudan sınıf içinde tanımlanabilir.
+Her nesne kendi name kopyasına sahiptir.	
+User.prototype.name yoktur, çünkü prototype değil instance özelliğidir.	
+Değeri sabit olabileceği gibi prompt() gibi dinamik de olabilir.	
+constructor ile de yapilabilir bu yaptigimiz class fields
 
 */
+
 
 /*
 Making bound methods with class fields
@@ -313,6 +357,10 @@ setTimeout(button.click, 1000); // hello
 The class field click = () => {...} is created on a per-object basis, there’s a separate function 
 for each Button object, with this inside it referencing that object. We can pass button.click 
 around anywhere, and the value of this will always be correct.
+//click = () => {...} bir class field tanımıdır.
+//Her Button nesnesi için yeni bir arrow function oluşturulur.
+//Arrow function olduğu için this, nesneye (butona) bağlı kalır.
+//setTimeout(button.click, 1000) çağrısı çalışır çünkü this bozulmaz.
 
 That’s especially useful in browser environment, for event listeners.
 
@@ -323,6 +371,8 @@ class Button {
   constructor(value) {
     this.value = value;
         this.click = this.click.bind(this); // Burada bağlama işlemi yapılıyor
+//this.click.bind(this) ile click() metodunu kalıcı olarak this bağlamına (yani butona) bağlıyoruz.
+//Böylece setTimeout(button.click, 1000) gibi çağrılarda bile this doğru kalır.
 
   }
 
@@ -352,11 +402,19 @@ class Button {
 let button = new Button("hello");
 
 setTimeout(() => button.click(), 1000)
+//() => button.click() bir arrow function'dır.
+//Arrow function'lar kendi this bağlamlarını miras alır, değiştirmez.
+//Bu durumda button.click() yine button nesnesine bağlı çalışır ve this.value → "hello" olur.
 
+
+//📌 Problem: "this" bağlamının kaybedilmesi
+//bunu yukaridaki gibi farkli sekillerde yapabiliriz
 
 */
 
-/*
+
+
+/* 
 The basic class syntax looks like this:
 
 class MyClass {
@@ -364,22 +422,39 @@ class MyClass {
 
   constructor(...) { // constructor
     // ...
+    //new MyClass(...) ile sınıfın yeni bir örneği (instance) oluşturulduğunda ilk çalışan fonksiyondur.
+    //Nesneye başlangıç değerleri atamak için kullanılır.
   }
 
   method(...) {} // method
+  //Bu tür metotlar, MyClass.prototype üzerinden tanımlanır.
+  //Hafıza açısından verimlidir, çünkü her nesne için tekrar oluşturulmaz.
+  //instance.method() şeklinde çağrılır.
 
   get something(...) {} // getter method
   set something(...) {} // setter method
 
   [Symbol.iterator]() {} // method with computed name (symbol here)
-  // ...
+  // Bu, sınıfın for...of döngüsünde çalışabilir olmasını sağlar.
+    //Symbol.iterator özel bir metottur ve iterable protokolünün parçasıdır.
+    //Sınıfı döngüyle gezilebilir yapmak için kullanılır.
+
 }
 MyClass is technically a function (the one that we provide as constructor), while methods, 
 getters and setters are written to MyClass.prototype
-*/
+/**
+ * 
+ *  
+typeof MyClass; // "function"
+Her ne kadar class yazımı modern ve OOP tarzı görünse de, aslında perde arkasında hâlâ bir constructor function çalışır.
+method, get, set gibi şeyler de MyClass.prototype üzerinde tanımlanır.
+prop = value gibi class fields ise nesneye (this) atanır, prototype’a değil.
+
+**/
+ 
 
 
-/*
+/* 
 //console ekraninda saati surekli gosteriyor
 class Clock {
   constructor({ template }) {
@@ -414,12 +489,16 @@ class Clock {
     this.render();
     this.timer = setInterval(() => this.render(), 1000);
   }
+  //İlk olarak this.render() çalışır → saati hemen yazdırır.
+  //Ardından setInterval ile her 1 saniyede bir render edilir.
+  //() => this.render() bir arrow function olduğu için this bağlamı korunur.
+
 }
 
 
 let clock = new Clock({template: 'h:m:s'});
 clock.start();
-*/
+ */
 
 /*
 Class inheritance is a way for one class to extend another class.
@@ -448,7 +527,7 @@ class Animal {
 let animal = new Animal("My animal");
 */
 
-/*
+/* 
 …And we would like to create another class Rabbit.
 
 As rabbits are animals, Rabbit class should be based on Animal, have access to animal methods, 
@@ -474,9 +553,19 @@ Animal methods, such as rabbit.run().
 Internally, extends keyword works using the good old prototype mechanics. It sets 
 Rabbit.prototype.[[Prototype]] to Animal.prototype. So, if a method is not found in 
 Rabbit.prototype, JavaScript takes it from Animal.prototype.
-*/
 
-/*
+//Rabbit.prototype.__proto__ === Animal.prototype // ✅ true
+//JavaScript'te extends, aslında Rabbit.prototype'ın [[Prototype]]'ını (yani gizli bağlantısını) Animal.prototype'a bağlar.
+//Böylece JavaScript, rabbit.run() gibi bir çağrıda önce Rabbit.prototype'a bakar, bulamazsa zincirden Animal.prototype'a geçer.
+//rabbit → Rabbit.prototype → Animal.prototype → Object.prototype→  null
+//Her seferinde yukarı doğru giderek method aranır.
+//super(...), üst sınıfın constructor'ını çağırır.
+//Yani burada Animal sınıfının constructor(name) metodu çalışır ve this.name atanır.
+//super() alt sınıf constructor'ının ilk satırı olmak zorundadır.
+ 
+
+
+
 For instance, to find rabbit.run method, the engine checks (bottom-up on the picture):
 
 The rabbit object (has no run).
@@ -488,7 +577,15 @@ As we can recall from the chapter Native prototypes, JavaScript itself uses prot
 
 Any expression is allowed after extends
 Class syntax allows to specify not just a class, but any expression after extends.
+//run() metodu rabbit objesinde yok → geç Rabbit.prototype'a
+//Rabbit.prototype içinde de yok → geç Animal.prototype'a
+//Animal.prototype içinde run() bulundu → çalıştırılır ✅
+//Bu yapı sayesinde Rabbit sınıfı, Animal'ın tüm metodlarını otomatik olarak kullanabilir.
+//JavaScript’in prototip tabanlı kalıtım sistemi bu şekilde işler.
+//Bu, yerleşik (native) sınıflarda da geçerlidir.
+*/
 
+/* 
 For instance, a function call that generates the parent class:
 
  function f(phrase) {
@@ -504,9 +601,26 @@ Here class User inherits from the result of f("Hello").
 
 That may be useful for advanced programming patterns when we use functions to generate classes 
 depending on many conditions and can inherit from them.
-*/
 
-/*
+//extends ifadesinden sonra sabit bir sınıf değil, herhangi bir ifade yazılabilir!
+//Bu sayede dinamik olarak sınıf türetilebilir.
+//Mesela: Kullanıcının rolüne göre farklı sınıf yaratmak, farklı yetenekler eklemek vs.
+function RoleMixin(role) {
+  return class {
+    getRole() {
+      return role;
+    }
+  }
+}
+
+class AdminUser extends RoleMixin("admin") {}
+class GuestUser extends RoleMixin("guest") {}
+
+console.log(new AdminUser().getRole()); // "admin"
+console.log(new GuestUser().getRole()); // "guest"
+ */
+
+/* 
 Overriding a method
 
 Now let’s move forward and override a method. By default, all methods that are not specified in 
@@ -565,6 +679,39 @@ let rabbit = new Rabbit("White Rabbit");
 rabbit.run(5); // White Rabbit runs with speed 5.
 rabbit.stop(); // White Rabbit stands still. White Rabbit hides!
 Now Rabbit has the stop method that calls the parent super.stop() in the process.
+//Genellikle üst sınıftaki metodu tamamen silmek yerine, onun üstüne bir şey eklemek isteriz.
+//Yani önce (veya sonra) super.method() ile parent metodunu çalıştırırız, sonra kendi kodumuzu yazarız.
+//Eğer constructor içinde super(...) çağırırsan, üst sınıfın constructor'ı çalışır.
+
+//() => super.method()	 Arrow function dıştaki super'i kullanır
+//Arrow function kendi super bağlamını oluşturmaz.
+//Bu yüzden super, bulunduğu yer olan Rabbit'in stop() fonksiyonundan alınır.
+//super.stop() ifadesi:
+//super.stop() demek = Animal.prototype.stop'u çağır demek.
+//Çünkü Rabbit sınıfı Animal sınıfını extend ediyor.
+//Dolayısıyla burada çağrılan metod → 🔁 Animal’ın stop() metodudur.
+//super demek = "bir üst sınıf" demek → Yani Animal.
+
+//function() { super.method() }	Regular function içinde super tanımsızdır
+//function():
+//Kendi bağlamını (this, super, vs.) oluşturur.
+//Ama bu function() bir class method değil, sadece bir fonksiyon.
+//JavaScript’te super sadece class methodlarının içinde geçerlidir.
+//Normal bir fonksiyonda super kullanamazsın.
+
+// bind(this) ile this'i düzeltip super çağrısını dışarı yap:
+//stop() {
+//  const that = this;
+//  setTimeout(function() {
+//    // super yok ama that ile dolanabiliriz
+//    Object.getPrototypeOf(Rabbit.prototype).stop.call(that);
+//  }, 1000);
+//}
+//Ama bu ikinci yöntem karmaşıktır, bu yüzden arrow function önerilir ✅
+
+
+
+Yani function() { super.xxx } → hiçbir zaman geçerli değil.
 
 Arrow functions have no super
 As was mentioned in the chapter Arrow functions revisited, arrow functions do not have super.
@@ -581,9 +728,9 @@ specified a “regular” function here, there would be an error:
 
 // Unexpected super
 setTimeout(function() { super.stop() }, 1000);
-*/
+ */
+/* 
 
-/*
 Overriding constructor
 
 With constructors it gets a little bit tricky.
@@ -658,21 +805,25 @@ For the Rabbit constructor to work, it needs to call super() before using this, 
 class Rabbit extends Animal {
 
   constructor(name, earLength) {
-    super(name);
-    this.earLength = earLength;
+    super(name); // Önce üst sınıfın constructor'ı çağrılır
+    this.earLength = earLength; // Artık 'this' kullanılabilir
   }
 
-  // ...
+  // Alt sınıfın (Rabbit) constructor’ı, “derived constructor” olarak etiketlenir (içsel: [[ConstructorKind]]: "derived").
+//JavaScript, this nesnesini oluşturmayı üst sınıfa bırakır.
+//Yani super(...) çağrılmadan önce this tanımlı değildir.
+//Bu yüzden önce super(...) çağrılıp üst sınıf çalıştırılır. O da this nesnesini kurar.
+
 }
 
 // now fine
 let rabbit = new Rabbit("White Rabbit", 10);
 alert(rabbit.name); // White Rabbit
 alert(rabbit.earLength); // 10
+ */
 
-*/
 
-/*
+/* 
 We can override not only methods, but also class fields.
 
 Although, there’s a tricky behavior when we access an overridden field in parent constructor, quite different from most other programming languages.
@@ -702,6 +853,13 @@ What’s interesting is that in both cases: new Animal() and new Rabbit(), the a
 In other words, the parent constructor always uses its own field value, not the overridden one.
 
 What’s odd about it?
+//Neden rabbit yerine animal çıktı?
+//Çünkü this.name satırı üst sınıfın constructor'ı çalışırken çalışıyor.
+//Ama Rabbit sınıfına ait name = 'rabbit' alanı henüz tanımlanmamış oluyor.
+//Animal constructor’ı çalışırken, henüz Rabbit içindeki name = 'rabbit' devreye girmedi.
+//JavaScript, alanları (fields) constructor'dan sonra oluşturuyor.
+
+
 
 If it’s not clear yet, please compare with methods.
 
@@ -753,9 +911,36 @@ constructor. Then it may be difficult to understand what’s going on, so we’r
 If it becomes a problem, one can fix it by using methods or getters/setters instead of fields.
 
 
-*/
+//Neden bu farklı çalıştı?
+//Çünkü metotlar prototip zinciri üzerinden çağrılır. Yani this.showName() derken:
+//Önce Rabbit.prototype kontrol edilir → bulur → çalıştırır.
+//Bu mekanizma super() çağrıldığında bile geçerlidir.
+//JavaScript’te sınıf alanlarının (fields) başlatılma sırası:
 
-/*
+//Durum	                                Ne zaman başlatılır?
+//Base class (extends olmayan)	      constructor'dan önce
+//Derived class (extends eden)	      super() çağrısından sonra
+
+//Konu	                   Field (name = '...')	                        Method (showName())
+//Override edilirse	      super() sırasında geçerli değil	              super() sırasında geçerli
+//Ne zaman çalışır?     	super()’den sonra tanımlanır	                Direkt prototype zincirinden alınır
+//Çözüm	                  Getter kullan	                                Direkt metot override et
+
+//super() sadece constructor içinde çalışır.
+//Ama super çağrıldığında prototip zinciri oluşur.
+//Bu zincirde metotlara erişilebilir, ama field'lar henüz tanımlanmaz.
+
+//Tanım Türü	                                  Ne zaman işler?	                                 super() sırasında ulaşılabilir mi?
+//name = 'rabbit' (field)   	                  super() sonrası	                                  ❌ Hayır, henüz tanımlı değil
+//get name() { return 'rabbit' } (metot)	      super() öncesi bile erişilir (prototipten)      	✅ Evet
+
+
+//field varsa atama gibi islemler super kullanacagiz ki calissin istedigimiz gibi
+//diger turlu metot seklinde kullanacagiz
+ */
+
+
+/* 
 //Super: internals, [[HomeObject]]
 Let’s get a little deeper under the hood of super. We’ll see some interesting things along the way.
 
@@ -775,6 +960,8 @@ details. That won’t harm. Or read on if you’re interested in understanding t
 
 In the example below, rabbit.__proto__ = animal. Now let’s try: in rabbit.eat() we’ll call
  animal.eat(), using this.__proto__:
+
+// __proto__ (veya modern haliyle Object.setPrototypeOf) ile yapılır.
 
  let animal = {
   name: "Animal",
@@ -798,6 +985,15 @@ At the line (*) we take eat from the prototype (animal) and call it in the conte
  would execute parent eat in the context of the prototype, not the current object.
 
 And in the code above it actually works as intended: we have the correct alert.
+
+//rabbit.eat() çağrıldığında:
+//this değeri = rabbit olur.
+//this.__proto__ = animal olur.
+//animal.eat.call(this) çalışır → this.name → "Rabbit" olur.
+//Ekrana Rabbit eats. yazar.
+//Her şey güzel. Ama sorun zincire bir nesne daha ekleyince başlıyor.
+
+
 
 Now let’s add one more object to the chain. We’ll see how things break:
 
@@ -831,6 +1027,35 @@ It may be not that obvious, but if we trace longEar.eat() call, then we can see 
 lines (*) and (**) the value of this is the current object (longEar). That’s essential: all 
 object methods get the current object as this, not a prototype or something.
 
+//Ne Yanlış Gidiyor?
+//longEar.eat() çağrılır → this = longEar
+//this.__proto__ → rabbit
+//rabbit.eat.call(this) çağrılır
+//Şimdi rabbit.eat() çalışır ama this hâlâ longEar.
+
+//rabbit.eat() içinde:
+//this = longEar olduğu için yine this.__proto__ = rabbit
+//Yani tekrar rabbit.eat.call(this) çalışır
+//Bu sonsuza kadar böyle gider: rabbit → rabbit → rabbit...
+//Yani super gibi bir şey yapmaya çalışırken aslında aynı metoda tekrar tekrar çağrı yapılıyor. 
+// Zincirde yukarı çıkamıyor çünkü this.__proto__ hep aynı /nesneye (rabbit) işaret ediyor.
+
+//[[HomeObject]].
+//super çağrıldığında JavaScript motoru:
+//Metodun tanımlandığı yeri ([[HomeObject]]) bulur
+//Oradan yukarıdaki prototipi alır ([[HomeObject]].__proto__)
+//O prototipteki metodu çalıştırır
+//Yani, super aslında this'e değil, metodun tanımlandığı yere bakarak yukarı çıkar. Bu yüzden sonsuz döngüye girmez.
+
+//super’in arkasındaki sistemi anlamak için yazılmış bir simülasyondur.
+//Sadece this ve __proto__ kullanarak super’i taklit etmeye çalışır.
+//Ama bu yöntem çalışmaz çünkü this her zaman en alttaki (çağıran) nesne olur.
+//Gerçek super, metodun tanımlandığı yeri baz alarak yukarı çıkar ([[HomeObject]] sayesinde).
+
+
+//super classlarda kullaniliyor , proto her yerde ama sonsuz donguye girebiliyor tehlikeli
+//metotlarin icine de ekleyebiliriz ornek asagida var
+
 So, in both lines (*) and (**) the value of this.__proto__ is exactly the same: rabbit. They 
 both call rabbit.eat without going up the chain in the endless loop.
 
@@ -854,12 +1079,12 @@ rabbit.eat.call(this);
 …So rabbit.eat calls itself in the endless loop, because it can’t ascend any further.
 
 The problem can’t be solved by using this alone.
+ */
 
 
-*/
 
-/*
-[[HomeObject]]
+
+/* [HomeObject]]
 
 To provide the solution, JavaScript adds one more special internal property for functions: 
 [[HomeObject]].
@@ -899,10 +1124,16 @@ longEar.eat();  // Long Ear eats.
 It works as intended, due to [[HomeObject]] mechanics. A method, such as longEar.eat, knows 
 its [[HomeObject]] and takes the parent method from its prototype. Without any use of this.
 
+//[[HomeObject]], JavaScript motorunun bir metoda "sen şu nesneye aitsin" diyebilmesi için tuttuğu gizli bir bağlamdır.
+//Bir metot, bir nesne içinde tanımlandıysa, otomatik olarak o nesne onun [[HomeObject]]'i olur.
+//super çağrıldığında, motor bu [[HomeObject]] üzerinden üst prototipi bulur.
+//Eğer JavaScript motoru sadece this.__proto__ ile işlem yapsaydı, her şey bozulurdu çünkü this her zaman
+//  çağıran nesneyi gösterir, tanımlandığı yeri değil.
+ */
 
-*/
 
-/*
+
+/* 
 Methods are not “free”
 
 As we’ve known before, generally functions are “free”, not bound to objects in JavaScript. So 
@@ -954,9 +1185,22 @@ Its [[HomeObject]] is rabbit, as it was created in rabbit. There’s no way to c
 The code of tree.sayHi() has super.sayHi() inside. It goes up from rabbit and takes the method
  from animal.
 
-*/
+//JavaScript'te fonksiyonlar genellikle bağımsızdır: Yani bir fonksiyonu bir nesneden başka bir nesneye 
+// kopyalayabilir, başka this ile çalıştırabilirsin.
+//Ancak super kullanan fonksiyonlar öyle değildir. Onlar bağlı oldukları nesneyi (yani [[HomeObject]]) hatırlarlar.
+//Bu bağ değiştirilemez. Dolayısıyla başka bir nesneye kopyalanınca, beklenmeyen şekilde hala eski nesneyle ilişkili kalır.
+// JavaScript’in bakış açısı şöyle:
+//“Bu fonksiyon ilk olarak rabbit içinde tanımlanmış, dolayısıyla super çağrısı yapılınca rabbit’in prototipine (animal) çıkılır.”
+//Bu yüzden sonuç seni şaşırtıyor:
+//📣 tree.sayHi() çağrısı "I'm a plant" yerine "I'm an animal" yazıyor!
 
-/*
+//super kullanan metotları kopyalamak tehlikelidir.
+//Kod tekrarını azaltayım derken yanlış prototip zincirinden fonksiyon çağırabilirsin.
+//[[HomeObject]], JavaScript’in bu “bağlılık” mekanizmasını sağlayan içsel özelliktir.
+ */
+
+
+/* 
 Methods, not function properties
 
 [[HomeObject]] is defined for methods both in classes and in plain objects. But for objects, 
@@ -978,14 +1222,21 @@ let rabbit = {
   eat: function() {
     super.eat();
   }
+  //Bu sadece bir fonksiyondur. JavaScript bunu bir özellik (property) olarak görür, [[HomeObject]] oluşturmaz.
+
+
 };
 
 rabbit.eat();  // Error calling super (because there's no [[HomeObject]])
+//rabbit.eat() çağrılıyor.
+//İçeride super.eat() var ama [[HomeObject]] yok.
+//JavaScript super'in nereden başlaması gerektiğini bilmiyor.
+//Sonuç: ❗ "Cannot use super outside of method" hatası gibi bir şey çıkar.
+ */
 
-*/
 
-/*
-To extend a class: class Child extends Parent:
+
+/* To extend a class: class Child extends Parent:
 That means Child.prototype.__proto__ will be Parent.prototype, so methods are inherited.
 When overriding a constructor:
 We must call parent constructor as super() in Child constructor before using this.
@@ -996,14 +1247,19 @@ Methods remember their class/object in the internal [[HomeObject]] property. Tha
 resolves parent methods.
 So it’s not safe to copy a method with super from one object to another.
 Also:
+//Child.prototype.__proto__ === Parent.prototype;
+//Child sınıfının prototipi (Child.prototype)
+//Parent.prototype üzerinden miras alır
+//Bu zincir sayesinde Child nesneleri Parent metodlarına erişebilir.
+
 
 Arrow functions don’t have their own this or super, so they transparently fit into the 
 surrounding context.
-*/
+ */
 
 
-/*
-class Animal {
+
+/* class Animal {
 
   constructor(name) {
     this.name = name;
@@ -1020,9 +1276,9 @@ class Rabbit extends Animal {
 
 let rabbit = new Rabbit("White Rabbit"); // ok now
 alert(rabbit.name); // White Rabbit
-*/
+ */
 
-/*
+/* 
 class Clock {
   constructor({ template }) {
     this.template = template;
@@ -1070,12 +1326,29 @@ class ExtendedClock extends Clock {
     this.timer = setInterval(() => this.render(), this.precision);
   }
 };
-*/
 
+
+//Miras: extends Clock → ExtendedClock, Clock sınıfının tüm özellik ve metodlarını devralır (render, stop vb.).
+//constructor(options)
+//super(options) çağrısı ile üst sınıfın (Clock) constructor’ı çalıştırılır ve template ayarlanır.
+//Ardından precision (milisaniye cinsinden güncelleme aralığı) okunur; verilmemişse varsayılan 1000 ms kullanılır.
+//this.precision = precision olarak saklanır.
+//start() override
+//Clock’taki start() yerine kendi start() metodunu kullanır.
+//Hemen render eder.
+//Ardından setInterval(..., this.precision) ile belirtilen aralığa göre günceller (örn. 500 ms’de bir).
+//Üst sınıfın start() metodunu tamamen değiştiriyoruz. İstersek super.start() deyip sonra timer’ı 
+// güncelleyebilirdik; ama burada direkt kendi zamanlayıcımızı kuruyoruz.
+
+//super(options) çağrısını ilk satırlarda yapmak zorundayız (constructor içinde this kullanmadan önce).
+//Arrow function (() => this.render()) kullanılması kritik; aksi halde this kaybolabilir.
+//Timer id’sini örnek (instance) üzerinde saklıyoruz (this.timer), böylece her saat ayrı durdurulabilir.
+//precision değerini çok küçük verirsen (örn. 10 ms), render çağrıları konsolu doldurur ve performansı etkileyebilir.
+ */
 
 
 //Static properties and methods
-/*
+/* 
 We can also assign a method to the class as a whole. Such methods are called static.
 
 In a class declaration, they are prepended by static keyword, like this:
@@ -1099,7 +1372,15 @@ User.staticMethod(); // true
 The value of this in User.staticMethod() call is the class constructor User itself (the “object before dot” rule).
 
 Usually, static methods are used to implement functions that belong to the class as a whole, but not to any particular object of it.
+//static ile tanımlanan metodlar, sınıfa (class) aittir.
+//Nesneye (örneğe/instance’a) değil, doğrudan sınıfın kendisine uygulanır.
+//Çünkü sayHi bir instance metodu değil, sınıfa ait bir metod.
 
+//Örneğin, bir sınıfa ait nesneleri karşılaştırmak istiyorsun ama bu metodun nesnelerin üstünde değil sınıfın kendisinde olması daha mantıklı:
+ */
+
+
+/* 
 For instance, we have Article objects and need a function to compare them.
 
 A natural solution would be to add Article.compare static method:
@@ -1128,6 +1409,9 @@ alert( articles[0].title ); // CSS
 Here Article.compare method stands “above” articles, as a means to compare them. It’s not a 
 method of an article, but rather of the whole class.
 
+// Burada compare tüm Article'lar için çalışan genel bir işlemdir.
+//Nesnenin kendisinde (article.compare) olması gerekmez, çünkü bir örneğe özel değil.
+
 Another example would be a so-called “factory” method.
 
 Let’s say, we need multiple ways to create an article:
@@ -1150,6 +1434,9 @@ Such as Article.createTodays() here:
     // remember, this = Article
     return new this("Today's digest", new Date());
   }
+  //Burada createTodays() statik bir metod ve her çağrıldığında bugünün tarihine göre yeni bir nesne üretir.
+
+
 }
 
 let article = Article.createTodays();
@@ -1157,6 +1444,13 @@ let article = Article.createTodays();
 alert( article.title ); // Today's digest
 Now every time we need to create a today’s digest, we can call Article.createTodays(). Once 
 again, that’s not a method of an article, but a method of the whole class.
+
+//Özellik	                     Normal Metot	                  static Metot
+//Nerede tanımlanır?	          Sınıf içinde method() {}	     Sınıf içinde static method() {}
+//Nereden çağrılır?	            Nesne üzerinden	               Sınıf üzerinden
+//this neyi gösterir?	              Nesneyi (örneği)	           Sınıfın kendisini
+//Ne için uygundur?	              Nesneye özel davranış	          Genel yardımcı/factory görevleri
+
 
 Static methods are also used in database-related classes to search/save/remove entries from
  the database, like this:
@@ -1171,9 +1465,12 @@ E.g. such code won’t work:
 
 // ...
 article.createTodays(); /// Error: article.createTodays is not a function
-*/
+//Çünkü createTodays() sadece sınıf (Article) üzerinden çağrılabilir.
+//🧩 Eğer metod, belirli bir nesneye (örneğe) ait değilse ve genel işlevi varsa → static metod yap!
+ */
 
-/*
+/* 
+
 Static properties are also possible, they look like regular class properties, but prepended by 
 static:
 
@@ -1185,9 +1482,18 @@ alert( Article.publisher ); // Ilya Kantor
 That is the same as a direct assignment to Article:
 
 Article.publisher = "Ilya Kantor";
-*/
 
-/*
+
+//Özellik                 	Static Property	                       Normal (instance) Property
+//Tanımlandığı yer        	static propertyName = value           	this.propertyName = value
+//Erişim şekli	            ClassName.propertyName	                 object.propertyName
+//Kime aittir?	                Sınıfın kendisine	                   Oluşturulan nesneye (örneğe)
+//Paylaşım durumu	              Tüm örnekler arasında ortaktır	      Her nesne kendine ait değer taşır
+
+ */
+
+
+/* 
 Inheritance of static properties and methods
 
 Static properties and methods are inherited.
@@ -1234,9 +1540,27 @@ Now when we call Rabbit.compare, the inherited Animal.compare will be called.
 
 How does it work? Again, using prototypes. As you might have already guessed, extends gives
  Rabbit the [[Prototype]] reference to Animal.
-*/
 
-/*
+
+ //Rabbit.compare
+//Normalde compare() metodu Animal sınıfına ait.
+//Ama Rabbit.compare() diye çağırabiliyoruz çünkü statik metotlar da miras alınır.
+//Burada rabbits dizisi, hızlarına göre sıralanıyor (en yavaş ilk sıraya).
+//🔸 Rabbit.planet
+//planet property’si Animal içinde tanımlı.
+//Ancak Rabbit de bunu kullanabilir: Rabbit.planet → "Earth"
+
+//Rabbit.__proto__ === Animal // ✅ true
+//extends deyimi sayesinde:
+
+//Rabbit’ın [[Prototype]]’ı Animal olur.
+//Bu da Rabbit üzerinden Animal'ın statik özellik ve metodlarına erişim sağlar.
+
+//Ama bu sadece sınıfın (class) kendisi içindir, örnekler (instance) bu static şeylere erişemez:
+
+ */
+
+/* 
 So, Rabbit extends Animal creates two [[Prototype]] references:
 
 Rabbit function prototypally inherits from Animal function.
@@ -1250,10 +1574,17 @@ class Rabbit extends Animal {}
 
 // for statics
 alert(Rabbit.__proto__ === Animal); // true
+// Rabbit sınıfı, Animal sınıfının statik özelliklerini ve metodlarını miras alıyor mu?
+//✅ Evet, alıyor. Çünkü Rabbit.__proto__ → Animal olur.
 
 // for regular methods
 alert(Rabbit.prototype.__proto__ === Animal.prototype); // true
-*/
+// Rabbit sınıfının örnekleri (instance'ları), Animal sınıfındaki metodlara erişebiliyor mu?
+//✅ Evet, erişebiliyor. Çünkü Rabbit.prototype.__proto__ → Animal.prototype olur.
+
+//Sınıf için: Rabbit.__proto__ === Animal
+//Nesneler için: Rabbit.prototype.__proto__ === Animal.prototype
+ */
 
 /*
 Static methods are used for the functionality that belongs to the class “as a whole”. It doesn’t 
@@ -1271,8 +1602,8 @@ Statik özellikler, bir örneğe bağlı olmayan, sınıf düzeyinde verileri de
 kullanılır.
 */
 
-/*
-class MyClass {
+
+/* class MyClass {
   static property = ...;
 
   static method() {
@@ -1287,11 +1618,11 @@ Static properties and methods are inherited.
 
 For class B extends A the prototype of the class B itself points to A: B.[[Prototype]] = A. 
 So if a field is not found in B, the search continues in A.
+ */
 
 
-*/
 
-/*
+/* 
 As we know, all objects normally inherit from Object.prototype and get access to “generic” 
 object methods like hasOwnProperty etc.
 
@@ -1311,6 +1642,13 @@ But if we spell it out explicitly like "class Rabbit extends Object", then the r
  different from a simple "class Rabbit"?
 
 What’s the difference?
+
+//Rabbit sınıfından oluşturulan nesneler (new Rabbit(...)) zaten Object'in tüm metotlarını miras alır:
+//let rabbit = new Rabbit("Rab");
+//console.log(rabbit.hasOwnProperty("name")); // ✅ true
+//Ama dikkat:
+//Rabbit.getOwnPropertyNames // ❌ Error (çünkü Object'in static metodlarını almaz)
+
 
 Here’s an example of such code (it doesn’t work – why? fix it?):
 
@@ -1334,15 +1672,20 @@ So here’s the fix:
 
  class Rabbit extends Object {
   constructor(name) {
-    super(); // need to call the parent constructor when inheriting
+    super(); // need to call the parent constructor when inheriting, Eksik olursa hata 
     this.name = name;
   }
 }
-
-let rabbit = new Rabbit("Rab");
+ 
+let rabbit = new Rabbit("Rab");                                  //   , Error: Must call super constructor
 
 alert( rabbit.hasOwnProperty('name') ); // true
 But that’s not all yet.
+
+//Ama dikkat:
+//Eğer super() çağırmazsan this tanımlanmaz ve hata verir:
+
+
 
 Even after the fix, there’s still an important difference between "class Rabbit extends Object" 
 and class Rabbit.
@@ -1387,13 +1730,24 @@ class Rabbit	                                    class Rabbit extends Object
 –	                                            needs to call super() in constructor
 Rabbit.__proto__ === Function.prototype	                Rabbit.__proto__ === Object
 
-*/
+//Eğer sadece Object metotları (örnek: hasOwnProperty, toString) kullanacaksan → class Rabbit yeterlidir.
+//Ama Object’in static metotlarını (Object.getOwnPropertyNames, Object.assign vs.) 
+// Rabbit sınıfına da vermek istiyorsan → extends Object yap.
 
+ */
+
+
+/*
 //Private and protected properties and methods
 //One of the most important principles of object oriented programming – delimiting internal 
 // interface from the external one.
 //Internal and external interface
-/*
+
+//Terim	                       Anlamı	                                JavaScript Karşılığı
+//External Interface	        Dışa açık, herkes erişebilir	         Public alan ve metotlar
+//Internal Interface	        Sadece içeride kullanılmalı	           Private # ve Protected _ üyeler
+
+
 In JavaScript, there are two types of object fields (properties and methods):
 
 Public: accessible from anywhere. They comprise the external interface. Until now we were only 
@@ -1407,8 +1761,8 @@ are also useful for the internal interface. They are in a sense more widespread 
 
 
 
-/*
-Protecting “waterAmount”
+
+/* Protecting “waterAmount”
 
 Let’s make a simple coffee machine class first:
 
@@ -1423,7 +1777,7 @@ Let’s make a simple coffee machine class first:
 }
 
 // create the coffee machine
-let coffeeMachine = new CoffeeMachine(100);
+let coffeeMachine = new CoffeeMachine(100); //constructor baslangic degeri oldugu icin power icin 100
 
 // add water
 coffeeMachine.waterAmount = 200;
@@ -1432,9 +1786,9 @@ outside to any value.
 
 Let’s change waterAmount property to protected to have more control over it. For instance, we 
 don’t want anyone to set it below zero.
-*/
+ */
 
-/*
+/* 
 Protected properties are usually prefixed with an underscore _.
 
 That is not enforced on the language level, but there’s a well-known convention between
@@ -1468,11 +1822,11 @@ let coffeeMachine = new CoffeeMachine(100);
 // add water
 coffeeMachine.waterAmount = -10; // _waterAmount will become 0, not -10
 Now the access is under control, so setting the water amount below zero becomes impossible.
+ */
 
 
-*/
 
-/*
+/* 
 Read-only “power”
 
 For power property, let’s make it read-only. It sometimes happens that a property must be set 
@@ -1501,10 +1855,10 @@ let coffeeMachine = new CoffeeMachine(100);
 alert(`Power is: ${coffeeMachine.power}W`); // Power is: 100W
 
 coffeeMachine.power = 25; // Error (no setter)
+ */
 
-*/
 
-/*
+/* 
 Getter/setter functions
 Here we used getter/setter syntax.
 
@@ -1535,10 +1889,17 @@ If we inherit class MegaMachine extends CoffeeMachine, then nothing prevents us 
 this._waterAmount or this._power from the methods of the new class.
 
 So protected fields are naturally inheritable. Unlike private ones that we’ll see below.
-*/
 
-/*
-//Private “#waterLimit”
+//coffeeMachine.waterAmount = 100; // get/set kullanımı
+//coffeeMachine.setWaterAmount(100); // function kullanımı
+//İki yaklaşım da geçerlidir. Seçim tamamen senin yazım tercihlerine ve kullanım senaryona bağlıdır:
+//UI bileşenleri gibi nesnelerde get/set daha yaygındır.
+//Çok parametre alacaksa, validation işlemi gerekiyorsa → setX() fonksiyonu daha uygundur.
+ */
+
+
+
+/* //Private “#waterLimit”
 There’s a finished JavaScript proposal, almost in the standard, that provides language-level 
 support for private properties and methods.
 
@@ -1620,10 +1981,14 @@ class User {
 }
 With private fields that’s impossible: this['#name'] doesn’t work. That’s a syntax limitation
  to ensure privacy.
-*/
+ 
+ //❌ this["#name"] gibi dolaylı yollarla da erişilemezler.
+  // private oldugu icin disardan erisilemiyor
+ */
 
-/*
-To hide an internal interface we use either protected or private properties:
+
+
+/* To hide an internal interface we use either protected or private properties:
 
 Protected fields start with _. That’s a well-known convention, not enforced at the language 
 level. Programmers should only access a field starting with _ from its class and classes 
@@ -1632,12 +1997,12 @@ Private fields start with #. JavaScript makes sure we can only access those from
  class.
 Right now, private fields are not well-supported among browsers, but can be polyfilled.
 
+ */
 
-*/
 
 //Extending built-in classes
 
-/*
+/* 
 Extending built-in classes
 Built-in classes like Array, Map and others are extendable also.
 
@@ -1659,6 +2024,13 @@ alert(filteredArr.isEmpty()); // false
 Please note a very interesting thing. Built-in methods like filter, map and others – return
  new objects of exactly the inherited type PowerArray. Their internal implementation uses the 
  object’s constructor property for that.
+//filter() gibi metotlar, yeni bir dizi döndürür.
+//Ama bu yeni dizi PowerArray türünde olur, yani özel metodunu korur!
+//alert(filteredArr instanceof PowerArray); // ✅ true
+//alert(filteredArr.isEmpty());             // ✅ çalışır
+//Çünkü filter() gibi metotlar this.constructor üzerinden yeni nesne yaratır.
+//Yani arr.constructor === PowerArray, ve filter() sonucu da PowerArray olur.
+
 
 In the example above,
 
@@ -1681,10 +2053,17 @@ in Symbol.species, like here:
     return this.length === 0;
   }
 
+  //Bazı durumlarda filter(), map() gibi metotların PowerArray değil, normal Array dönmesini isteyebilirsin.
+//işte bu durumda Symbol.species devreye girer:
+
+
   // built-in methods will use this as the constructor
-  static get [Symbol.species]() {
-    return Array;
+  static get [Symbol.species]() { 
+    return Array; //YENİ OLUŞAN nesneler normal Array olacak
   }
+  //filter(), map() gibi metodlar yeni nesne üretirken bu değeri kullanır.
+//Bu sayede türetilmiş sınıfın davranışını kontrol edebilirsin.
+
 }
 
 let arr = new PowerArray(1, 2, 5, 10, 50);
@@ -1700,9 +2079,28 @@ further.
 
 Other collections work similarly
 Other collections, such as Map and Set, work alike. They also use Symbol.species.
-*/
 
-/*
+
+//filteredArr artık normal Array olur.
+//Dolayısıyla özel metodun (isEmpty) kaybolur:
+//Aynı kalıtım mantığı Map, Set gibi yerleşik koleksiyonlarda da geçerlidir:
+
+//Yeni davranışlar eklemek	Array, Map, vs. sınıflara özel metodlar tanımlayabilirsin.
+//filter/map sonucu kontrolü	 Symbol.species ile bu metodların ne tür nesne döndüreceğini sen belirleyebilirsin.
+//Genişletilebilir yapı kurmak	Kodunu modüler ve yeniden kullanılabilir hale getirir.
+//Symbol.species	Bu davranışı özelleştirir (örneğin Array döndürmesini sağlar). duz array olusturuyor
+//eski metotlari kayboluyor
+
+
+//Özellik	                          Symbol.species YOK	              Symbol.species VAR (Array döner)
+//filter(), map() sonucu      	     PowerArray	                      Array
+//Özel metodlar (isEmpty)	             KALIR                          	KAYBOLUR
+//Genişletilmiş sınıf korunur mu?	     ✅ Evet	                       ❌ Hayır
+//filtered instanceof PowerArray	     ✅ true	                       ❌ false
+
+ */
+
+/* 
 No static inheritance in built-ins
 
 Built-in objects have their own static methods, for instance Object.keys, Array.isArray etc.
@@ -1718,18 +2116,45 @@ For example, both Array and Date inherit from Object, so their instances have me
 Object.prototype. But Array.[[Prototype]] does not reference Object, so there’s no, for instance, 
 Array.keys() (or Date.keys()) static method.
 
+//Normal sınıflar static methodları miras alır. (yani static olan şeyler üst sınıftan alt sınıfa geçer)
+//Ama yerleşik sınıflar (Array, Date, Map, vs.) bu kuralı bozuyor:
+//"Statik methodlar miras alınmaz"
 
-*/
+//Array.isArray([]); // ✅ Bu çalışır: Array'in static methodu
+//Object.keys({});   // ✅ Bu da çalışır: Object'in static methodu
+//Ama:
+//Array.keys(); // ❌ TypeError: Array.keys is not a function
+//Date.keys();  // ❌ TypeError
+//❓ Neden? Çünkü:
+//Array, Object'tan kalıtsal olarak geliyor olsa bile
+//Object.keys gibi statik methodlar, Array'e aktarılmaz
+//Yani Object.keys var ama Array.keys diye bir şey yok çünkü Array, Object'ın statik methodlarını miras almaz.
 
-/*
+//console.log(Object.keys({a:1})); // ✅ ['a']
+//console.log(Array.keys);        // ❌ undefined
+//console.log(Date.keys);         // ❌ undefined
+//Halbuki Array ve Date, Object sınıfından geliyor... ama static methodları geçmiyor.
+//Yerleşik sınıflar "native code" ile yazılmıştır
+//Array, Date, Map gibi sınıflar JavaScript ile değil, tarayıcı motorunun içinde C++ gibi dillerle tanımlanmıştır.
+//Bu nedenle onların static prototip zinciri, normal sınıflardan farklı davranır.
+
+ */
+
+
+/* 
 //Class checking: "instanceof"
 The instanceof operator allows to check whether an object belongs to a certain class. It also
  takes inheritance into account.
+//instanceof operatörü, bir nesnenin hangi sınıftan (veya onun mirasçılarından) türediğini kontrol eder.
 
 Such a check may be necessary in many cases. For example, it can be used for building a 
 polymorphic function, the one that treats arguments differently depending on their type.
 
 The instanceof operator
+//instanceof şu şekilde çalışır:
+//arr instanceof Array ⇒ arr.__proto__ zincirinde Array.prototype var mı?
+//Varsa ✅ true döner
+//Yoksa 🔴 false döner
 
 The syntax is:
 
@@ -1759,13 +2184,14 @@ inherits from Object.
 
 Normally, instanceof examines the prototype chain for the check. We can also set a custom 
 logic in the static method Symbol.hasInstance
+ */
 
-*/
 
-/*
+/* 
 The algorithm of obj instanceof Class works roughly as follows:
 
-If there’s a static method Symbol.hasInstance, then just call it: Class[Symbol.hasInstance](obj). It should return either true or false, and we’re done. That’s how we can customize the behavior of instanceof.
+If there’s a static method Symbol.hasInstance, then just call it: Class[Symbol.hasInstance](obj). It 
+should return either true or false, and we’re done. That’s how we can customize the behavior of instanceof.
 
 For example:
 
@@ -1780,6 +2206,10 @@ class Animal {
 let obj = { canEat: true };
 
 alert(obj instanceof Animal); // true: Animal[Symbol.hasInstance](obj) is called
+//İlk olarak, class’ın içinde özel olarak tanımlanmış bir Symbol.hasInstance() metodu varsa, instanceof bunu çağırır.
+//Burada, obj aslında Animal sınıfından oluşturulmamış ama canEat özelliği var diye biz true dönüyoruz.
+
+
 Most classes do not have Symbol.hasInstance. In that case, the standard logic is used: obj 
 instanceOf Class checks whether Class.prototype is equal to one of the prototypes in the obj 
 prototype chain.
@@ -1804,9 +2234,12 @@ alert(rabbit instanceof Animal); // true
 
 // rabbit.__proto__ === Animal.prototype (no match)
 // rabbit.__proto__.__proto__ === Animal.prototype (match!)
-*/
 
-/*
+ */
+
+
+
+/* 
 By the way, there’s also a method objA.isPrototypeOf(objB), that returns true if objA is 
 somewhere in the chain of prototypes for objB. So the test of obj instanceof Class can be 
 rephrased as Class.prototype.isPrototypeOf(obj).
@@ -1816,6 +2249,8 @@ It’s funny, but the Class constructor itself does not participate in the check
 
 That can lead to interesting consequences when a prototype property is changed after the object
  is created.
+//Animal.prototype.isPrototypeOf(dog) , dog instanceof Animal ifadesi ile aynı anlama gelir
+//dog instanceof Animal ≈ Animal.prototype.isPrototypeOf(dog)
 
 Like here:
 
@@ -1827,12 +2262,12 @@ Rabbit.prototype = {};
 
 // ...not a rabbit any more!
 alert( rabbit instanceof Rabbit ); // false
-*/
 
+ */
 
-/*
+/* 
 Bonus: Object.prototype.toString for the type
-
+//"tip tespiti" (type detection).
 We already know that plain objects are converted to string as [object Object]:
 
  let obj = {};
@@ -1842,7 +2277,7 @@ alert(obj.toString()); // the same
 That’s their implementation of toString. But there’s a hidden feature that makes toString 
 actually much more powerful than that. We can use it as an extended typeof and an alternative 
 for instanceof.
-
+//obj nesnesinin toString metodunun Object.prototype.toString olmasıdır ve bu da varsayılan olarak [object Object] döner.
 Sounds strange? Indeed. Let’s demystify.
 
 By specification, the built-in toString can be extracted from the object and executed in the 
@@ -1866,6 +2301,18 @@ alert( objectToString.call(arr) ); // [object Array]
 Here we used call as described in the chapter Decorators and forwarding, call/apply to execute 
 the function objectToString in the context this=arr.
 
+//Ancak Object.prototype.toString metodu, yalnızca object tipinde değil, her türlü veri tipi 
+// için kullanılabilir — sayılar, diziler, fonksiyonlar, null, undefined vs.
+//Ama nasıl?
+//Metodu başka veri tiplerine uygulayarak. Bunu da .call() veya .apply() ile yapabiliyoruz.
+
+//call(arr) sayesinde this = arr olarak çalıştırıyoruz.
+//Yani: Object.prototype.toString.call([]) → "[object Array]"
+//Bu bize dizinin tipini net olarak veriyor. Normalde typeof arr sadece "object" derdi,
+//  ama bu yöntemle "Array" olduğunu görebiliyoruz.
+
+
+
 Internally, the toString algorithm examines this and returns the corresponding result. More
  examples:
 
@@ -1875,13 +2322,69 @@ alert( s.call(123) ); // [object Number]
 alert( s.call(null) ); // [object Null]
 alert( s.call(alert) ); // [object Function]
 
+
+//Normalde JavaScript'te typeof bazı tipler için yetersizdir:
+//typeof null;      // "object"  ❌ beklenen "null"
+//typeof [];        // "object"  ❌ beklenen "array"
+//Ama:
+//Object.prototype.toString.call(null); // "[object Null]" ✅
+//Object.prototype.toString.call([]);   // "[object Array]" ✅
+//Bu yöntemi kullanarak veri tipini %100 doğru şekilde öğrenebiliriz.
+
+
+//Kütüphaneler (Lodash, Underscore, vs.) genellikle veri tipini güvenli 
+// şekilde anlamak için bu yöntemi kullanır.
+//instanceof bazı durumlarda işe yaramaz (özellikle farklı global context'lerde).
+//typeof da karmaşık nesnelerde yetersizdir.
+
+//verdigmiz degiskenin thisini kullaniyoruz
+//a.call(b) demek = Object.prototype.toString.call(b) demek
+//Bu sadece toString fonksiyonunu, this = b olarak çalıştırır
+//Sonuç: "[object Array]"
+//🟡 Ama b hâlâ dizidir, başka bir tipe dönüşmez.
+//call() metodu, bir fonksiyonu istediğimiz this değeriyle çalıştırmak için kullanılır. 
+// Yani: func.call(thisArg, arg1, arg2, ...)
+
+// a.call(b) demek, a fonksiyonunu this = b olarak çalıştır demektir.
+//Yani Object.prototype.toString.call(b) sadece b'nin tipini string olarak bize gösterir
+//  ama b hâlâ aynı türde kalır (örneğin bir dizi).
+ */
+/*
+function selamla(isim) {
+  console.log(this.prefix + isim);
+}
+
+let baglam = { prefix: "Merhaba " };
+
+selamla.call(baglam, "Serkan"); // Merhaba Serkan
+this = baglam oldu çünkü call()'a ilk argüman olarak baglam verdik.
+"Serkan" ise fonksiyonun normal parametresi olarak geçti.
+
 */
 
 /*
+function toplam(a, b) {
+  console.log(this.prefix + (a + b));
+}
+
+let obj = { prefix: "Toplam: " };
+
+toplam.call(obj, 3, 5); // Toplam: 8
+this → obj
+a = 3, b = 5 → parametre olarak geçti
+
+*/
+
+
+
+/* 
 Symbol.toStringTag
 
 The behavior of Object toString can be customized using a special object property
  Symbol.toStringTag.
+//Symbol.toStringTag, bir nesneye Object.prototype.toString.call(...) ile 
+// baktığımızda görünen ismi belirleyen özel (symbol) bir özelliktir.
+
 
 For instance:
 
@@ -1890,6 +2393,19 @@ For instance:
 };
 
 alert( {}.toString.call(user) ); // [object User]
+//user adlı nesneye özel bir özellik tanımlanıyor: [Symbol.toStringTag]: "User"
+//Sonra {}.toString.call(user) ile Object.prototype.toString çağrılıyor
+//Normalde bu [object Object] dönerdi
+//Ama şimdi Symbol.toStringTag tanımlandığı için: [object User] olarak döner
+//Yani çıktı artık özelleştirildi.
+
+//Bu şu demek:
+//Object.prototype.toString.call(user)
+//Ama daha kısa olsun diye şöyle yazılıyor:
+//{}.toString.call(user)
+//Burada {} aslında boş bir nesne. Bu nesnenin toString metodu = Object.prototype.toString.
+
+
 For most environment-specific objects, there is such a property. Here are some browser specific 
 examples:
 
@@ -1907,11 +2423,14 @@ for built-in objects and even can be customized.
 We can use {}.toString.call instead of instanceof for built-in objects when we want to get the
  type as a string rather than just to check.
 
+//Yöntem	                                   Açıklama
+//typeof	                                     Primitifler için uygun, nesnelerde yetersiz
+//instanceof	                                Sınıf kontrolü için kullanılır ama farklı global ortamlar (iframe vs.) sorun yaratabilir
+//Object.prototype.toString.call(...)	          Detaylı, her tür için güvenilir, Symbol.toStringTag ile özelleştirilebilir
+ */
 
-*/
 
-/*
-
+/* 
                                 works for	                                  returns
 typeof	                                primitives	                            string
 {}.toString	primitives,   built-in objects,objects with Symbol.toStringTag	    string
@@ -1921,10 +2440,23 @@ As we can see, {}.toString is technically a “more advanced” typeof.
 And instanceof operator really shines when we are working with a class hierarchy and want 
 to check for the class taking into account inheritance.
 
+//typeof null       // ❌ "object" (tarihsel hata!)
+//typeof {}         // "object"
+//typeof []         // "object" (Dizi olduğunu söylemez!)
 
-*/
+// {}.toString.call(...): Gelişmiş Tip Algılama
+//Object.prototype.toString.call(null);          // [object Null]
+//true/false değil, string döner, karşılaştırma için ekstra işlem gerekebilir.
 
-/*
+
+//instanceof: Nesne ve Sınıf Kontrolü
+//Class/constructor ilişkisi kontrolü için çok kullanışlıdır.
+//Mirası (inheritance) dikkate alır.
+//Sadece nesnelerde çalışır.
+//Farklı global ortamlarda (iframe, window) sınıf referansları farklı olabilir, bu da false verebilir.
+ */
+/* 
+
 In the code below, why does instanceof return true? We can easily see that a is not 
 created by B().
 
@@ -1932,7 +2464,9 @@ created by B().
 function B() {}
 
 A.prototype = B.prototype = {};
+//Bu satırda, hem A.prototype hem de B.prototype aynı boş objeye ({}) eşitleniyor.
 
+//
 let a = new A();
 
 alert( a instanceof B ); // true
@@ -1943,7 +2477,29 @@ And here a.__proto__ == B.prototype, so instanceof returns true.
 
 So, by the logic of instanceof, the prototype actually defines the type, not the constructor
  function.
-*/
+
+ //new A() dediğimizde şu olur:
+
+//Boş bir obje oluşturulur: {}
+//Bu objenin __proto__'su (yani prototip referansı) A.prototype olur.
+//Yani:
+//a.__proto__ === A.prototype
+//Şimdi a.__proto__ === A.prototype === B.prototype
+//Çünkü A.prototype ile B.prototype aynı objeye işaret ediyor.
+
+//instanceof constructor fonksiyonuna değil, o fonksiyonun prototype objesine bakar.
+//a.__proto__ (yani a'nın prototipi), B.prototype ile aynıysa a instanceof B true olur.
+//A.prototype = B.prototype yaptığımız için aslında a'nın prototipi B.prototype ile aynı.
+//Bu yüzden a instanceof B true.
+
+//Neden a B tarafından yaratılmamış gibi gözükür ama instanceof B true döner?
+//Çünkü instanceof sadece prototip zincirini kontrol eder, constructor fonksiyonunun kim 
+// olduğu veya new ile hangi fonksiyonun çağrıldığına bakmaz.
+//a instanceof B  // true
+//çünkü:
+//a.__proto__ === B.prototype (çünkü A.prototype = B.prototype = {})
+//instanceof sadece prototip zincirinde arama yapar.
+ */
 
 //mixins
 
@@ -1973,7 +2529,7 @@ Başka bir deyişle, bir mixin belirli bir davranışı uygulayan yöntemler sa�
  başına kullanmayız, davranışı diğer sınıflara eklemek için kullanırız.
 */
 
-/*
+/* 
 A mixin example
 
 The simplest way to implement a mixin in JavaScript is to make an object with useful methods, 
@@ -2000,6 +2556,9 @@ class User {
 
 // copy the methods
 Object.assign(User.prototype, sayHiMixin);
+//Object.assign() fonksiyonu, bir nesnenin özelliklerini başka bir nesneye kopyalar.
+//Burada sayHiMixin içindeki metodlar, doğrudan User.prototype içine kopyalanıyor.
+//Sonuç olarak User sınıfının örnekleri (User objeleri), sayHi() ve sayBye() metodlarına sahip oluyorlar.
 
 // now User can say hi
 new User("Dude").sayHi(); // Hello Dude!
@@ -2012,10 +2571,30 @@ class User extends Person {
 
 Object.assign(User.prototype, sayHiMixin);
 Mixins can make use of inheritance inside themselves.
-*/
 
-/*
-For instance, here sayHiMixin inherits from sayMixin:
+//User burada başka bir sınıf (Person) üzerinden kalıtım alıyor.
+//Ama sayHiMixin'in metodları kopyalandığı için, User sınıfı sanki birden fazla yerden özellik almış gibi davranıyor.
+//User hem Person'dan kalıtım alıyor, hem de sayHiMixin ile karışım (mixin) alıyor.
+
+//JavaScript tekli kalıtım destekler (sadece bir extends).
+//Ama birçok sınıfta tekrar kullanmak istediğin metodlar varsa, mixin ile tekrar eden kodları merkezi hale getirebilirsin.
+//Özellikle davranış bazlı parçalar için idealdir (örneğin: konuşma, loglama, zamanlama gibi şeyler).
+
+
+//Mixin İçinde Kalıtım Kullanımı
+
+let advancedMixin = {
+  __proto__: sayHiMixin, // kalıtım gibi davranır
+  sayWelcome() {
+    alert(`Welcome ${this.name}`);
+  }
+};
+//Burada advancedMixin, sayHiMixin'i kendi içinde kalıtım gibi kullanıyor.
+//Artık advancedMixin hem sayHi() ve sayBye()'a, hem de sayWelcome() metoduna sahip olur.
+ */
+
+
+/* For instance, here sayHiMixin inherits from sayMixin:
 
  let sayMixin = {
   say(phrase) {
@@ -2025,14 +2604,25 @@ For instance, here sayHiMixin inherits from sayMixin:
 
 let sayHiMixin = {
   __proto__: sayMixin, // (or we could use Object.setPrototypeOf to set the prototype here)
-
-  sayHi() {
+//Alternatif olarak şu da yazılabilir:
+//Object.setPrototypeOf(sayHiMixin, sayMixin);
+  
+sayHi() {
     // call parent method
     super.say(`Hello ${this.name}`); // (*)
   },
+
   sayBye() {
     super.say(`Bye ${this.name}`); // (*)
   }
+//Burada super, sayHiMixin'in prototipini (yani sayMixin) temsil eder.
+//Bu yüzden super.say(...) çağrısı, sayMixin.say(...) fonksiyonunu çağırır.
+//super ifadesi, literal olarak __proto__ ile ayarlanmış nesneye erişmek için kullanılıyor.
+
+//Bu super çağrısı bir sınıfın içinde değil, bir nesne (mixin) metodunda çalışıyor. 
+// Yine de super çalışıyor çünkü JavaScript bunu destekliyor — eğer nesnenin 
+// prototipi başka bir nesneye ayarlanmışsa.
+
 };
 
 class User {
@@ -2049,8 +2639,11 @@ new User("Dude").sayHi(); // Hello Dude!
 Please note that the call to the parent method super.say() from sayHiMixin (at lines labelled
  with (*)) looks for the method in the prototype of that mixin, not the class.
 
+ //say() metodu kopyalanmaz!
+//Çünkü say() sadece sayHiMixin.__proto__’da var. Yani sayHiMixin kendi içinde super.say() 
+// diyerek ulaşıyor buna. Bu yüzden mixin’in içindeki super.say(...) hâlâ çalışıyor.
 
-*/
+ */
 
 /*
 EventMixin
@@ -2091,7 +2684,7 @@ olaya tepki vermek için işleyiciler atayabilir. Ve benzeri.
 
 */
 
-/*
+/* 
 let eventMixin = {
   
   // * Subscribe to event, usage:
@@ -2118,6 +2711,12 @@ let eventMixin = {
       }
     }
   },
+  //splice(i--, 1):
+//Önce i'deki elemanı siler.
+//Sonra i-- ile bir geri gider.
+//Bu, dizi elemanları silindikten sonra kaymayı telafi etmek için yapılır.
+//Aksi halde bazı elemanlar atlanabilir.
+
 
   
   // * Generate an event with the given name and data
@@ -2132,9 +2731,12 @@ let eventMixin = {
     this._eventHandlers[eventName].forEach(handler => handler.apply(this, args));
   }
 };
-.on(eventName, handler) – assigns function handler to run when the event with that name occurs. Technically, there’s an _eventHandlers property that stores an array of handlers for each event name, and it just adds it to the list.
+.on(eventName, handler) – assigns function handler to run when the event with that name occurs. 
+Technically, there’s an _eventHandlers property that stores an array of handlers for each event 
+name, and it just adds it to the list.
 .off(eventName, handler) – removes the function from the handlers list.
-.trigger(eventName, ...args) – generates the event: all handlers from _eventHandlers[eventName] are called, with a list of arguments ...args.
+.trigger(eventName, ...args) – generates the event: all handlers from _eventHandlers[eventName] 
+are called, with a list of arguments ...args.
 Usage:
 
  // Make a class
@@ -2158,8 +2760,25 @@ Now, if we’d like any code to react to a menu selection, we can listen for it 
 
 And eventMixin mixin makes it easy to add such behavior to as many classes as we’d like, without interfering with the inheritance chain.
 
+//Bu mixin, herhangi bir sınıfa event sistemi eklemeyi mümkün kılar.
+//Başka sınıflardan extends almanı engellemez (inheritance zincirine karışmaz).
+//Çok sayıda nesneye, yeniden yazmadan ortak event davranışı katmanı sağlar.
 
-*/
+//trigger, on ve off ile kendi olay sistemimizi (custom event system) yazmış olduk. Bu
+//  sayede sınıflar arası iletişim kurabiliyoruz. Yani bir sınıf, dışarıya “şimdi bir şey 
+// oldu!” diyebiliyor; başka bir kod da “olduysa bana haber ver!” diyebiliyor.
+
+// örneğin:
+//Kullanıcı tıkladığında
+//Sunucudan veri geldiğinde
+//Bir iş bittiğinde
+//bir olay (event) oluşturur ve bazı işlemleri otomatik olarak tetiklemek ister.
+//Tarayıcıda buna örnek:
+//button.addEventListener("click", () => { ... });
+//Biz de kendi sınıflarımız için benzer bir sistem kurduk.
+ */
+
+
 
 /*
 Mixin – is a generic object-oriented programming term: a class that contains methods for other
