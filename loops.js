@@ -95,7 +95,7 @@
 //We can actually remove everything, creating an infinite loop:
 
 //for (;;) {
-//  // repeats without limits
+//  // repeats without limits, sonsuza kadar calisir
 //}
 //Please note that the two for semicolons ; must be present. Otherwise, there would be a syntax error.
 
@@ -161,6 +161,14 @@
 //Ancak bir yan etki olarak, bu bir tane daha yuvalama düzeyi yarattı (küme parantezlerinin içindeki uyarı 
 // çağrısı). If'nin içindeki kod birkaç satırdan uzunsa, bu genel okunabilirliği azaltabilir.
 
+
+//continue ile:
+//Fazla girintili (nested) yazımdan kurtulursun.
+//Ana işlemi öne çıkartırsın.
+//Özellikle koşullar çoğaldığında daha okunabilir kod elde edersin.
+
+
+
 //No break/continue to the right side of ‘?’
 //Please note that syntax constructs that are not expressions cannot be used with 
 //the ternary operator ?. In particular, directives such as break/continue aren’t allowed there.
@@ -182,6 +190,8 @@
 //Labels for break/continue
 
 //Sometimes we need to break out from multiple nested loops at once.
+
+//continue ve break birer komut (statement)’tır, ifade (expression) değildir.
 
 //For example, in the code below we loop over i and j, prompting for the coordinates (i, j) from (0,0) to (2,2):
 
@@ -216,6 +226,9 @@
 
     // if an empty string or canceled, then break out of both loops
  //   if (!input) break outer; // (*)
+  //outer: etiketi dış döngüyü etiketler.
+//break outer direkt bu etikete gider ve her iki döngüden de çıkar.
+//Eğer sadece break yazsaydın, sadece içteki for döngüsü kırılırdı.
 
     // do something with the value...
 //  }
@@ -343,6 +356,11 @@
 //for..of geçerli öğenin numarasına erişim sağlamaz, yalnızca değerine erişim sağlar, 
 // ancak çoğu durumda bu yeterlidir. Ve daha kısadır.
 //Technically, because arrays are objects, it is also possible to use for..in:
+
+//✅ for...of — Diziler, Map, Set gibi iterable (yinelenebilir) yapılar için kullanılır.
+//✅ for...in — Nesneler (object) veya dizilerin indeksleri / anahtarları (keys) üzerinde döner.
+
+
 
 //for..in
 //let arr = ["Apple", "Orange", "Pear"];
