@@ -529,7 +529,7 @@ a "prototype" property of the constructor function, described in this chapter. S
 scripts that still use it.
 Please note that F.prototype here means a regular property named "prototype" on F. It sounds 
 something similar to the term “prototype”, but here we really mean a regular property with this 
-name.
+name. 
 Unutmayın, yeni nesneler new F() gibi bir kurucu fonksiyon ile oluşturulabilir.
 Eğer F.prototype bir nesne ise, new operatörü bunu yeni nesne için [[Prototype]] ayarlamak için 
 kullanır.
@@ -723,6 +723,9 @@ the existing ones.
 
 */
 
+//prototype, bir constructor fonksiyonunun (veya class’ın) nesnelere miras verdiği ortak özelliklerin bulunduğu yerdir.
+
+
 /*
 …And if the code is like this (replaced one line)?
 
@@ -863,7 +866,7 @@ outcome of the missing constructor.
 /*
 
 Let’s say we output an empty object:
-
+ 
  let obj = {};
 alert( obj ); // "[object Object]" ?
 …But the short notation obj = {} is the same as obj = new Object(), where Object is a 
@@ -937,6 +940,14 @@ alert(f.__proto__ == Function.prototype); // true
 alert(f.__proto__.__proto__ == Object.prototype); // true, inherit from objects
 */
 
+
+
+//Nesneler: Prototipi Object.prototype
+//Diziler: Prototipi Array.prototype, onun da prototipi Object.prototype
+//Fonksiyonlar: Prototipi Function.prototype, onun da prototipi Object.prototype
+//Zincirin tepesinde Object.prototype vardır, onun prototipi nulldır.
+//Prototip zinciri sayesinde, nesneler kendilerinde olmayan metotları ve özellikleri prototiplerinden “miras” alır.
+
 /*
 Primitives
 
@@ -968,6 +979,13 @@ becomes available to all strings:
 "BOOM!".show(); // BOOM!
 During the process of development, we may have ideas for new built-in methods we’d like to have, 
 and we may be tempted to add them to native prototypes. But that is generally a bad idea.
+
+//Yerleşik (native) prototiplere yeni metodlar ekleyebiliriz, örneğin String.prototype'a show diye bir metod ekledik.
+//Böylece tüm stringler show() metodunu kullanabilir.
+//Ama bu genelde kötü bir fikirdir! Neden? Çünkü:
+//Prototipler globaldir, yani tüm kod tarafından paylaşılıyor.
+//İki farklı kütüphane aynı isimde bir metod eklerse, biri diğerinin üzerine yazar ve çatışma çıkar.
+
 
 Important:
 Prototypes are global, so it’s easy to get a conflict. If two libraries add a method 
@@ -1028,6 +1046,13 @@ It works because the internal algorithm of the built-in join method only cares a
 indexes and the length property. It doesn’t check if the object is indeed an array. Many built-in
  methods are like that.
 
+//obj normalde dizi değil ama diziler gibi 0, 1, length özelliklerine sahip.
+//Array.prototype.join metodunu obj’ye kopyaladık ve obj.join(',') çalıştı.
+//Çünkü join sadece length ve indekslere bakıyor, objenin Array olup olmadığına bakmıyor.
+//Alternatif olarak, obj.__proto__ = Array.prototype yaparak da tüm Array metodlarını miras alabiliriz.
+//Ama bir nesne sadece bir prototipi miras alabilir, dolayısıyla başka bir prototip miras alıyorsa bu mümkün değil.
+
+ 
 Another possibility is to inherit by setting obj.__proto__ to Array.prototype, so all Array 
 methods are automatically available in obj.
 
@@ -1078,6 +1103,14 @@ function f(a, b) {
 
 f.defer(1000)(1, 2); // shows 3 after 1 sec
 Please note: we use this in f.apply to make our decoration work for object methods.
+
+
+//defer şimdi bir decorator gibi çalışıyor:
+//Orijinal fonksiyonu f olarak saklıyor.
+//Gecikmeli çalışacak, argüman alabilen ve this bağlamını koruyan yeni bir fonksiyon döndürüyor.
+//f.apply(this, args) ile f fonksiyonunu çağırırken, this ve argümanları aynen geçiriyor.
+//Böylece fonksiyonlar this bağlamıyla birlikte gecikmeli çalıştırılabiliyor.
+
 
 So if the wrapper function is called as an object method, then this is passed to the original method f.
 
@@ -1176,6 +1209,12 @@ And JavaScript engines are highly optimized for this. Changing a prototype “on
   doing, or JavaScript speed totally doesn’t matter for you.
 */
 
+//JavaScript motorları, bir objenin prototipi sabit kalacak diye optimizasyon yapar.
+//Prototipi sonradan değiştirirsen (setPrototypeOf veya __proto__), bu optimizasyonlar bozulur → kodun yavaş çalışmasına neden olur.
+//Bu yüzden: Objeyi oluştururken bir kez ayarla, sonra prototipi değiştirme.
+
+
+
 //"Very plain" objects
 /*
 As we know, objects can be used as associative arrays to store key/value pairs.
@@ -1192,6 +1231,12 @@ obj[key] = "some value";
 
 alert(obj[key]); // [object Object], not "some value"!
 Here, if the user types in __proto__, the assignment in line 4 is ignored!
+
+//Kullanıcı "__proto__" yazarsa, bu özel bir key olduğu için gerçekten objeye eklenmez.
+//Çünkü __proto__ aslında Object.prototype’ten gelen bir getter/setter'dır, sıradan bir property değildir.
+//obj["__proto__"] = "some value" demek, obj'nin prototipini "some value" (yani string) yapmak gibi olur. 
+// Bu da geçerli olmadığı için görmezden gelinir.
+
 
 That could surely be surprising for a non-developer, but pretty understandable for us. 
 The __proto__ property is special: it must be either an object or null. A string can not become 
@@ -1250,6 +1295,12 @@ alert(obj[key]); // "some value"
 Object.create(null) creates an empty object without a prototype ([[Prototype]] is null):
 
 
+
+//Bu şekilde oluşturulan objenin prototipi yoktur → __proto__ da yoktur.
+//Bu yüzden "__proto__" gibi key'leri güvenli bir şekilde kullanabilirsin.
+//Bu tür objelere “very plain objects” ya da “dictionary objects” denir. Sadece senin eklediğin key’ler vardır.
+//Bu objelerde toString, hasOwnProperty gibi default metodlar yok çünkü Object.prototype’ten gelmezler.
+//Ama Object.keys(obj) gibi fonksiyonlar çalışır çünkü onlar global fonksiyonlardır, prototiple ilgili değiller.
 */
 
 /*
@@ -1322,6 +1373,10 @@ To make toString non-enumerable, let’s define it using a property descriptor. 
   }
 });
 
+//Object.create(null, descriptors) ile objeye özel property’ler tanımlayabiliyorsun.
+//Bu örnekte toString, Object.keys(this).join() döndürüyor.
+//Bu metod non-enumerable, yani for..in içinde gözükmez. (Varsayılan olarak enumerable: false)
+
 dictionary.apple = "Apple";
 dictionary.__proto__ = "test";
 
@@ -1358,4 +1413,14 @@ Rabbit.prototype.sayHi();              // undefined
 Object.getPrototypeOf(rabbit).sayHi(); // undefined
 rabbit.__proto__.sayHi();              // undefined
 */
+//Neden sadece rabbit.sayHi() doğru çalışıyor?
+//Çünkü this → kimin üzerinden çağrıldıysa onu gösterir.
 
+
+//Bu satır, bir objeyi hem prototipiyle hem de tüm özellik tanımlarıyla birlikte şekilsel olarak kopyalar.
+//Yani hem obj’nin prototipi hem de value, enumerable, writable gibi descriptor bilgileri kopyalanır.
+
+//__proto__ key'i özeldir	Normal property değil, getter/setter'dır. Objeye key olarak eklenemez.
+//Object.create(null)	Prototipsiz “saf” objedir. Tam dictionary gibi çalışır.
+//toString() özel tanımlama	Non-enumerable metod olarak tanımlanabilir.
+//Prototipi sonradan değiştirmek	Yavaştır. Performans düşer. Tavsiye edilmez.
