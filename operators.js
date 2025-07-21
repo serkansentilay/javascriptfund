@@ -9,6 +9,15 @@
 //let x = 1, y = 3;
 //alert( y - x ); // 2, binary minus subtracts values
 
+//let a = "5";
+//let b = +a; // a string, ama + ile number oldu
+
+//console.log(typeof a); // string
+//console.log(typeof b); // number
+//Burada +a ifadesi de unary operator’dur, a değişkenini sayıya çevirir.
+
+
+
 //Addition +,
 //Subtraction -,
 //Multiplication *,
@@ -85,7 +94,7 @@
 //14	                                unary plus	                        +
 //14	                                unary negation	                    -
 //13	                                exponentiation	                    **
-//12	                                multiplicatio                       *
+//12	                                multiplication                       *
 //12	                                division	                        /
 //11	                                addition	                        +
 //11	                                subtraction	                        -
@@ -140,7 +149,7 @@
 //The “prefix form” is when the operator goes before the variable: ++counter.
 
 //let counter = 1;
-//let a = ++counter; // (*)
+//let a = ++counter; // (*) //// önce artır, sonra ata
 
 //alert(a); // 2
 //In the line (*), the prefix form ++counter increments counter and returns the new value, 2. So, the alert shows 2.
@@ -148,16 +157,17 @@
 //Now, let’s use the postfix form:
 
 // let counter = 1;
-//let a = counter++; // (*) changed ++counter to counter++
+//let a = counter++; // (*) changed ++counter to counter++ //// önce ata, sonra artır
 
 ///alert(a); // 1
-//In the line (*), the postfix form counter++ also increments counter but returns the old value (prior to increment). So, the alert shows 1.
+//In the line (*), the postfix form counter++ also increments counter but returns the old value 
+// (prior to increment). So, the alert shows 1.
 
 //soldakine bakilir ++ ise once islem yapilir ve sonra deger dondurulur
 //once degisken ismi varsa atama daha sonra arttirma islemi yapilir
 
 //If the result of increment/decrement is not used, there is no difference in which form to use:
-//kullanilmazsa islemler farketmez
+//sonuc kullanilmazsa islemler farketmez
 // let counter = 0;
 //counter++;
 //++counter;
@@ -395,11 +405,39 @@
 //The second operand 2 is truthy, so the execution is halted, 2 is returned and then shown by the outer alert.
 //There will be no 3, because the evaluation does not reach alert(3).
 
+// alert(1) çalışır
+
+//Bu, ekrana "1" yazdırır (bir mesaj kutusu açılır).
+//Ama alert() fonksiyonu her zaman undefined döndürür.
+//✅ Ekrana çıkan ilk şey: 1
+//2. undefined || 2 || alert(3) kısmı değerlendirilir
+
+//|| operatörü, ilk truthy değeri bulur ve durur.
+//undefined → falsy, geçer
+//2 → truthy → bulundu, artık durur
+//alert(3) çalıştırılmaz çünkü kısa devre oldu.
+//✅ Ekrana çıkan ikinci şey: 2
+
+
 // 1, and then undefined.
 // alert( alert(1) && alert(2) );
 //The call to alert returns undefined (it just shows a message, so there’s no meaningful return).
 //Because of that, && evaluates the left operand (outputs 1), and immediately stops, because 
 // undefined is a falsy value. And && looks for a falsy value and returns it, so it’s done
+
+//alert(1) çalışır
+
+//Ekrana 1 yazar.
+//Ama yine alert() → undefined döner.
+//✅ Ekrana çıkan: 1
+//2. undefined && alert(2) kısmı değerlendirilir
+
+//&& operatörü, ilk falsy değeri bulur ve durur.
+//undefined → falsy → bulundu → artık işlem biter
+//alert(2) çalıştırılmaz.
+//❌ 2 görünmez.
+
+
 
 //alert( null || 2 && 3 || 4 );
 //The precedence of AND && is higher than ||, so it executes first.
@@ -411,9 +449,26 @@
 // The result of -1 || 0 = -1, truthy
 //if (-1 || 0) alert( 'first' );
 
+//-1 || 0 ifadesi hesaplanır
+//-1 truthy bir değerdir (sıfırdan farklı herhangi bir sayı truthy sayılır)
+//OR (||) ilk truthy değeri bulur → -1
+//Yani: if (-1 || 0) ➝ if (true) gibi çalışır
+//✅ Sonuç: alert('first') çalışır → ekranda "first" görünür
+
+
 // Doesn't run
 // -1 && 0 = 0, falsy
 //if (-1 && 0) alert( 'second' );
+
+//Mantık:
+//-1 && 0 ifadesi hesaplanır
+//&& operatörü ilk falsy değeri döner
+//-1 truthy → devam eder
+//0 falsy → sonuç: 0
+//if (0) ➝ if (false) gibi olur
+//❌ Sonuç: alert('second') çalışmaz → hiçbir şey görünmez
+
+
 
 // Executes
 // Operator && has a higher precedence than ||
@@ -447,7 +502,8 @@
 
 //The nullish coalescing operator is written as two question marks ??.
 
-//As it treats null and undefined similarly, we’ll use a special term here, in this article. For brevity, we’ll say that a value is “defined” when it’s neither null nor undefined.
+//As it treats null and undefined similarly, we’ll use a special term here, in this article.
+//  For brevity, we’ll say that a value is “defined” when it’s neither null nor undefined.
 
 //The result of a ?? b is:
 
