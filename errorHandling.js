@@ -1021,3 +1021,16 @@ alert( err instanceof SyntaxError ); // true
 alert( err instanceof SyntaxError ); // true (because inherits from SyntaxError)
 
 */
+
+/*
+Types of Errors
+
+Besides error constructors, Javascript also has other core Error constructors. Like
+
+AggregateError - A collection of errors thrown simultaneously.
+EvalError - An error occurred during the evaluation of a JavaScript expression.
+InternalError - An internal JavaScript error, often indicating a bug in the engine.
+RangeError - A value is outside the allowed range for a given operation.
+ReferenceError - A variable or object is referenced before it's declared or doesn't exist.
+SyntaxError - The code contains incorrect syntax, preventing it from being parsed.
+*/

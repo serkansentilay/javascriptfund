@@ -209,7 +209,7 @@
 //alert( str.indexOf('widget') ); // -1, not found, the search is case-sensitive
 //alert( str.indexOf("id") ); // 1, "id" is found at the position 1 (..idget with id)
 
-
+//
 //For instance, the first occurrence of "id" is at position 1. To look for the next occurrence, 
 // let’s start the search from position 2:
 // let str = 'Widget with id';
@@ -1375,7 +1375,8 @@ The strict comparison === is even simpler, as it doesn’t convert types.
 So, if we compare arrays with ==, they are never the same, unless we compare two variables that
  reference exactly the same array.
 
-
+== ile iki nesne (veya dizi), ancak şu durumda eşittir:
+İki nesne tam olarak aynı referansa (yani bellekteki aynı yere) işaret ediyorsa
 */
 
 /*
@@ -1391,6 +1392,20 @@ Comparison with primitives may give seemingly strange results as well:
 alert('0' == [] ); // false
 Here, in both cases, we compare a primitive with an array object. So the array [] gets converted
  to primitive for the purpose of comparison and becomes an empty string ''.
+
+[] (boş dizi), karşılaştırma için primitive’e çevrilir → '' (boş string)
+Karşılaştırma:
+0 == ''
+→ '' sayıya çevrilir → 0
+→ 0 == 0 → ✅ true
+
+
+[] → '' (boş string)
+Karşılaştırma:
+'0' == ''
+→ İkisi de string olduğu için tür dönüşümü yapılmaz
+→ '0' ile '' farklıdır → ❌ false
+
 
 Then the comparison process goes on with the primitives, as described in the chapter Type 
 Conversions:
@@ -1592,7 +1607,8 @@ For big arrays (1000, 10000 or more items) such algorithms can lead to serious s
 /*
 Fast solution
 
-Let’s walk the array and keep the current partial sum of elements in the variable s. If s becomes negative at some point, then assign s=0. The maximum of all such s will be the answer.
+Let’s walk the array and keep the current partial sum of elements in the variable s. If s becomes negative 
+at some point, then assign s=0. The maximum of all such s will be the answer.
 
 If the description is too vague, please see the code, it’s short enough:
 
@@ -1812,7 +1828,8 @@ The result of the function (if it returns any) is thrown away and ignored.
 /*
 indexOf/lastIndexOf and includes
 
-The methods arr.indexOf and arr.includes have the similar syntax and do essentially the same as their string counterparts, but operate on items instead of characters:
+The methods arr.indexOf and arr.includes have the similar syntax and do essentially the same as their 
+string counterparts, but operate on items instead of characters:
 
 arr.indexOf(item, from) – looks for item starting from index from, and returns the index where it was found, otherwise -1.
 arr.includes(item, from) – looks for item starting from index from, returns true if found.
@@ -2048,7 +2065,7 @@ This works exactly the same as the longer version above.
 
 /*
 For many alphabets, it’s better to use str.localeCompare method to correctly sort letters, 
-such as Ö.
+such as .
 
 For example, let’s sort a few countries in German:
 
@@ -2211,6 +2228,21 @@ The method arr.reduceRight does the same but goes from right to left.
 */
 
 /*
+reduceRight() aynen reduce() gibi çalışır ama sağdan sola işler.
+
+let arr = [1, 2, 3];
+
+arr.reduceRight((a, b) => {
+  console.log(`a: ${a}, b: ${b}`);
+  return a + b;
+});
+Çalışma sırası:
+3 + 2 + 1 → yani önce 3 + 2, sonra sonucu + 1
+*/
+
+
+
+/*
 Arrays do not form a separate language type. They are based on objects.
 
 So typeof does not help to distinguish a plain object from an array:
@@ -2336,11 +2368,24 @@ We can use every to compare arrays:
 alert( arraysEqual([1, 2], [1, 2])); // true
 arr.fill(value, start, end) – fills the array with repeating value from index start to end.
 
+//const arr = [1, 2, 3, 4, 5];
+// 1 ile 3 arasındaki elemanları 0 ile doldurur (3 hariç)
+//arr.fill(0, 1, 3);
+//console.log(arr); // [1, 0, 0, 4, 5]
+
 arr.copyWithin(target, start, end) – copies its elements from position start till position end
 into itself, at position target (overwrites existing).
+//const arr = [1, 2, 3, 4, 5];
+// 0. indekse, 3. ve 4. indeks aralığını (3 dahil, 5 hariç) kopyalar
+//arr.copyWithin(0, 3, 5);
+//console.log(arr); // [4, 5, 3, 4, 5]
 
 arr.flat(depth)/arr.flatMap(fn) create a new flat array from a multidimensional array.
-
+//Çok boyutlu dizileri, belirli bir derinliğe kadar düzleştirir.
+//Kullanım:
+//const nested = [1, 2, [3, 4, [5, 6]]];
+//console.log(nested.flat(1)); // [1, 2, 3, 4, [5, 6]]
+//console.log(nested.flat(2)); // [1, 2, 3, 4, 5, 6]
 
 */
 
@@ -2388,7 +2433,8 @@ alert( arr ); // 5,3,8,1 (not modified)
 */
 
 /*
- Write a function filterRangeInPlace(arr, a, b) that gets an array arr and removes from it all values except those that are between a and b. The test is: a ≤ arr[i] ≤ b.
+ Write a function filterRangeInPlace(arr, a, b) that gets an array arr and removes from it all values 
+ except those that are between a and b. The test is: a ≤ arr[i] ≤ b.
 
 The function should only modify the array. It should not return anything.
 
@@ -2397,7 +2443,8 @@ The function should only modify the array. It should not return anything.
 
 
 /*
-Write a function filterRangeInPlace(arr, a, b) that gets an array arr and removes from it all values except those that are between a and b. The test is: a ≤ arr[i] ≤ b.
+Write a function filterRangeInPlace(arr, a, b) that gets an array arr and removes from it all values except 
+those that are between a and b. The test is: a ≤ arr[i] ≤ b.
 
 The function should only modify the array. It should not return anything.
 
@@ -2422,12 +2469,28 @@ filterRangeInPlace(arr, 1, 4); // removed the numbers except from 1 to 4
 alert( arr ); // [3, 1]
  */
 
+//i--
+//Eleman silindiğinde, dizideki elemanlar sola kayar.
+//Eğer i değerini azaltmazsak, bir sonraki eleman atlanmış olur.
+//Dizi: [5, 3, 8, 1]
+//i = 0 → 5 silinir → dizi: [3, 8, 1]
+//Eğer i++ ile devam edersek, 3’ü atlamış oluruz.
+//Bu yüzden i-- yapılarak, bir adım geri gidilir, sonra i++ ile tekrar doğru elemana geçilir.
+
+
+
 /*
 let arr = [5, 2, 1, -10, 8];
 
 arr.sort((a, b) => b - a);
 
 alert( arr );
+
+//arr.sort((a, b) => a - b);
+//Negatif dönerse: a önce gelir.
+//Pozitif dönerse: b önce gelir.
+//0 dönerse: eşit kabul edilir.
+
 */
 
 /*
@@ -2505,6 +2568,19 @@ usersMapped = [
 
 alert( usersMapped[0].id ); // 1
 alert( usersMapped[0].fullName ); // John Smith
+
+// Dizi (Array) vs. Nesne (Object) – Detaylı Farklar
+
+//Özellik/Farklılık	              Dizi (Array)	                                           Nesne (Object)
+//Kullanım amacı	                  Sıralı veri listesi	                                  Anahtar–değer (key-value) ilişkileri
+//Anahtar tipi (key)                  	Otomatik sayısal indeksler (0, 1, 2, ...)	            Kendi belirlediğin string (veya Symbol)
+//Sıralı mı?	                  ✅ Evet, sıralıdır                                          	❌ Hayır, sıralı değildir
+//Özellik sayacı                	.length özelliği vardır                             	Object.keys(obj).length ile bulunur
+//İterasyon (döngü)	                    for, for...of, forEach, map...	                for...in, Object.keys(), Object.entries()
+//Metotlar (fonksiyonlar)	                push(), pop(), map(), filter(), sort()	          Genellikle kullanıcı tanımlıdır
+//Performans (büyük veride)               	Optimize edilmiştir	                        Daha esnektir ama diziler kadar hızlı değildir
+//Tür kontrolü	                      Array.isArray(arr)	                              typeof obj === "object"
+//Özelleştirme	                    Elemanlar sıralıdır, indisle erişilir	                  Key'ler istediğin gibi adlandırılır
 
 
 
@@ -2841,6 +2917,59 @@ object itself. But two parallel for-ofs is a rare thing, even in async scenarios
  
  */
 
+
+/*
+[Symbol.iterator] Nedir?
+
+Symbol.iterator, bir özel sembol (Symbol)'dür.
+JavaScript bu sembolü for...of, spread (...), Array.from(), Promise.all() gibi yapılar için kullanır.
+Eğer bir nesne obj[Symbol.iterator]() fonksiyonunu tanımlamışsa, o nesne iterable kabul edilir.
+📦 Ne işe yarar?
+
+1. for...of ile çalışmasını sağlar
+let arr = [10, 20, 30];
+
+for (let num of arr) {
+  console.log(num);
+}
+Bu örnekte JavaScript aslında şunu yapar:
+
+let iterator = arr[Symbol.iterator](); // dahili çağrı
+iterator.next(); // { value: 10, done: false }
+iterator.next(); // { value: 20, done: false }
+iterator.next(); // ...
+2. ... (spread) operatörüyle çalışmasını sağlar
+let set = new Set(["a", "b", "c"]);
+console.log([...set]); // ["a", "b", "c"]
+
+// çünkü set[Symbol.iterator]() vardır
+3. Kendi özel iterable yapını yazabilirsin
+let custom = {
+  from: 1,
+  to: 3,
+  [Symbol.iterator]() {
+    let current = this.from;
+    let last = this.to;
+    return {
+      next() {
+        return current <= last
+          ? { value: current++, done: false }
+          : { done: true };
+      }
+    };
+  }
+};
+
+for (let num of custom) {
+  console.log(num); // 1, 2, 3
+}
+🔥 Şu an custom nesnesi aslında bir dizi değil ama for...of ile gezilebilir, çünkü [Symbol.iterator]() metodu tanımlı.
+
+*/
+
+
+
+
 /*
 For a string, for..of loops over its characters:
 
@@ -2914,6 +3043,14 @@ Both iterables and array-likes are usually not arrays, they don’t have push, p
 
 
 */
+//array-like
+//Bir nesne diziye benziyordur, ama array değildir.
+//🔑 Şartlar:
+//Sayısal (index) property'ler vardır: obj[0], obj[1]
+//length property’si vardır.
+//Ama:
+//❌ Symbol.iterator yoktur → for...of ile gezilemez
+//❌ push/pop/slice gibi array metodları çalışmaz
 
 
 /*
@@ -3022,6 +3159,10 @@ Array.from(obj[, mapFn, thisArg]) makes a real Array from an iterable or array-l
 //Arrays are used for storing ordered collections.
 
 
+//Object: sadece string veya symbol türünde key kabul eder.
+//Map: her türden key kabul eder: sayı, boolean, obje, fonksiyon, vs.
+
+
 //MAPS
 
 /**
@@ -3053,6 +3194,8 @@ alert( map.get('1') ); // 'str1'
 alert( map.size ); // 3
 As we can see, unlike objects, keys are not converted to strings. Any type of key is possible.
 
+//Yani 1 (number) ile '1' (string) farklı anahtarlardır.
+❗ Oysa Object kullanırsan 1 ve '1' aynı key gibi davranır çünkü key'ler string'e dönüştürülür.
 
  * 
  */
@@ -3063,6 +3206,12 @@ map[key] isn’t the right way to use a Map
 Although map[key] also works, e.g. we can set map[key] = 2, this is treating map as a plain 
 JavaScript object, so it implies all corresponding limitations (only string/symbol keys and 
 so on).
+
+//Uyarı: map[key] Yanlış Kullanım
+//map[key] = 2; // Bu da çalışır gibi görünür ama aslında Map'in özelliği değil
+//Bu şekilde kullanırsan Map’in gerçek yeteneklerinden (örneğin non-string key kullanımı) yararlanamazsın.
+//Bu durumda, Map'i sıradan bir object gibi kullanmış olursun. Ve bu, Map’in amacını bozar.
+
 
 So we should use map methods: set, get and so on.
 
@@ -3079,6 +3228,10 @@ visitsCountMap.set(john, 123);
 alert( visitsCountMap.get(john) ); // 123
 */
 
+//john bir nesne (object)
+//Map nesneyi referans olarak saklar.
+//Aynı nesneyle get() yaparsan, değeri geri alırsın. ✅
+
 /**
  * let john = { name: "John" };
 let ben = { name: "Ben" };
@@ -3094,8 +3247,27 @@ As visitsCountObj is an object, it converts all Object keys, such as john and be
  same string "[object Object]". Definitely not what we want.
 
 
+ //visitsCountObj[ben] demek aslında visitsCountObj["[object Object]"] demek.
+//Çünkü Object key olarak object alınca otomatik olarak stringe çevirir → "[object Object]".
+//Yani john da ben de aynı string key’e dönüşür → veri çakışır, son yazılan kazanır.
+
+
  * 
  */
+
+//Özellik	                Map	                                              Object
+//Key türü	              Her tür (object, number, ...)	                    Sadece string veya symbol
+//Sıralama	              Eklenme sırasına göre	                            Key sırası garanti edilmez
+//İdeal kullanım	        Veri saklama / lookup	                            Genel yapı/değişken saklama
+//JSON ile uyum	          ❌ JSON.stringify edilemez	                        ✅ JSON.stringify ile uyumlu
+//Yineleme (for...of)   	✅ map.entries() ile	                              ❌ (sadece for...in)
+//size özelliği	          ✅ map.size	                                      ❌ Object.keys(obj).length gerekir
+
+//Eğer key'ler karmaşık türler (object, number, boolean) olacaksa → Map kullan.
+//Eğer basit key-değer ilişkisi ve JSON uyumluluğu gerekiyorsa → Object yeterlidir.
+//Map, modern ve daha güçlüdür; büyük veri saklamaları için daha uygundur.
+
+
 
  /**
   * How Map compares keys
@@ -3223,7 +3395,7 @@ That’s the same, because Object.fromEntries expects an iterable object as the 
 necessarily an array. And the standard iteration for map returns same key/value pairs as 
 map.entries(). So we get a plain object with same key/values as the map.
 */
-
+// Map, aynı key ile tekrar eklenmesine izin verir, ancak bu bir güncelleme olur, yeni bir ekleme sayılmaz.
 
 /*Set
 
@@ -3315,6 +3487,14 @@ Iteration over Map and Set is always in the insertion order, so we can’t say t
 
 */
 
+//valueAgain neden var?
+
+//Sadece Map ile uyum için. Map.forEach((value, key) => {...}) yapısı ile uyumluluk sağlamak için 
+// Set’te de iki kez aynı değer gönderilir: (value, value, set).
+
+//Map, gelişmiş bir Object alternatifi gibi çalışır. Karmaşık veri saklamada idealdir.
+//Set, hızlıca benzersiz veri toplamak için kullanılır. Özellikle büyük veri kümelerinde 
+// (ör. kullanıcılar, etiketler, kimlikler) çok etkilidir.
 
 /*
 function unique(arr) {
@@ -3352,6 +3532,13 @@ let arr = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
 
 alert( aclean(arr) );
 Letter-sorting is done by the chain of calls in the line (*).
+
+
+//4. word = "PAN"
+//"PAN" → "pan" → ["p", "a", "n"] → ["a", "n", "p"] → "anp"
+//→ sorted = "anp"
+//map.set("anp", "PAN")
+//"anp" zaten vardı, yeni değerle güncellenir.
 
 For convenience let’s split it into multiple lines:
 
@@ -3397,7 +3584,7 @@ to it, e.g. .push.
 
 But that doesn’t work:
 That’s because map.keys() returns an iterable, but not an array.
-//arraylerde pushlama islemiyoroluyor maplerde olmuyor 
+//arraylerde pushlama islemi oluyor maplerde olmuyor 
 We can convert it into an array using Array.from:
 
  let map = new Map();
@@ -3513,20 +3700,61 @@ The JavaScript engine decides that. It may choose to perform the memory cleanup 
 
 */
 
+
+/*
+
+//WeakMap Ne Yapar?
+
+let john = { name: "John" };
+let weakMap = new WeakMap();
+
+weakMap.set(john, "some value");
+john = null;
+✅ Fark:
+WeakMap, nesne referansını zayıf (weak) tutar.
+Artık başka bir yerden erişilemiyorsa, nesne garbage collected olur.
+WeakMap içindeki veri de otomatik silinir.
+❗ Ama dikkat:
+WeakMap:
+yalnızca nesne türü key kabul eder (string değil!),
+içinde kaç öğe olduğunu göremezsin (no .size, .keys()),
+sadece .get, .set, .has, .delete metodları vardır.
+🎯 Neden Kullanılır?
+
+Örnek: Nesne ile ilgili "ek bilgi" tutmak istiyoruz ama nesne silinince bu bilgi de silinsin istiyoruz.
+let john = { name: "John" };
+
+let visitsCountMap = new WeakMap();
+visitsCountMap.set(john, 123);
+
+// sonradan:
+john = null; // kullanıcı gitti
+
+// john bellekte silinir → WeakMap içindeki bilgi de silinir
+Avantaj: Belleği manuel temizlemene gerek yok. JS motoru otomatik siler.
+
+*/
+
+
 /*
 Use case: additional data
 
 The main area of application for WeakMap is an additional data storage.
 
-If we’re working with an object that “belongs” to another code, maybe even a third-party library, and would like to store some data associated with it, that should only exist while the object is alive – then WeakMap is exactly what’s needed.
+If we’re working with an object that “belongs” to another code, maybe even a third-party library,
+ and would like to store some data associated with it, that should only exist while the object is alive
+  – then WeakMap is exactly what’s needed.
 
-We put the data to a WeakMap, using the object as the key, and when the object is garbage collected, that data will automatically disappear as well.
+We put the data to a WeakMap, using the object as the key, and when the object is garbage collected, 
+that data will automatically disappear as well.
 
 weakMap.set(john, "secret documents");
 // if john dies, secret documents will be destroyed automatically
 Let’s look at an example.
 
-For instance, we have code that keeps a visit count for users. The information is stored in a map: a user object is the key and the visit count is the value. When a user leaves (its object gets garbage collected), we don’t want to store their visit count anymore.
+For instance, we have code that keeps a visit count for users. The information is stored in a map: 
+a user object is the key and the visit count is the value. When a user leaves (its object gets 
+garbage collected), we don’t want to store their visit count anymore.
 
 Here’s an example of a counting function with Map:
 
@@ -3573,7 +3801,8 @@ except as a key of WeakMap, it gets removed from memory, along with the informat
 /*
 Use case: caching
 
-Another common example is caching. We can store (“cache”) results from a function, so that future calls on the same object can reuse it.
+Another common example is caching. We can store (“cache”) results from a function, 
+so that future calls on the same object can reuse it.
 
 To achieve that, we can use Map (not optimal scenario):
 
@@ -3606,9 +3835,11 @@ let result2 = process(obj); // remembered result taken from cache
 obj = null;
 
 alert(cache.size); // 1 (Ouch! The object is still in cache, taking memory!)
-For multiple calls of process(obj) with the same object, it only calculates the result the first time, and then just takes it from cache. The downside is that we need to clean cache when the object is not needed any more.
+For multiple calls of process(obj) with the same object, it only calculates the result the first time,
+ and then just takes it from cache. The downside is that we need to clean cache when the object is not needed any more.
 
-If we replace Map with WeakMap, then this problem disappears. The cached result will be removed from memory automatically after the object gets garbage collected.
+If we replace Map with WeakMap, then this problem disappears. The cached result will be removed from 
+memory automatically after the object gets garbage collected.
 
  // 📁 cache.js
 let cache = new WeakMap();
@@ -3715,9 +3946,68 @@ Now, which data structure could you use to store information about whether the m
 P.S. When a message is removed from messages, it should disappear from your structure as well.
 P.P.S. We shouldn’t modify message objects, add our properties to them. As they are managed by 
 someone else’s code, that may lead to bad consequences.
+*/
+
+/*
+Özellik / Farklar	                WeakMap	                                         WeakSet
+Anahtar (key)	                  Sadece nesne (object)	                         Sadece nesne (object)
+Değer (value)	                    Her anahtar için bir değer saklar	            Sadece var/yok bilgisi (true/false gibi)
+Yineleme (iterasyon)	              ❌ Mümkün değil (for...of yok)              	❌ Mümkün değil
+.size, .keys(), vs.	                  ❌ Yok                                        	❌ Yok
+Bellek yönetimi (GC)	              Anahtar nesne silinirse, değeri de gider	    Nesne silinirse, WeakSet'ten de silinir
+Kullanım amacı	                  Ek veri saklama (metadata, cache)	                Nesne var mı/yok mu kontrolü
+
+*/
+
+
+/*
+Kullanım Durumu	                                                Tercih Edilecek Yapı
+Nesneye ait ek bilgi saklamak (örneğin: user => visits)         	✅ WeakMap
+Hesaplanmış verileri nesneyle eşlemek (cache)	                    ✅ WeakMap
+Nesnelerin varlığını kontrol etmek (ziyaret etti mi?)           	✅ WeakSet
+Bir nesnenin "etiketlenip etiketlenmediğini" kontrol etmek	      ✅ WeakSet
+Bellek sızıntısı riski olan geçici veri tutmak	                  ✅ Her ikisi
+*/
 
 
 
+/*
+Soru	                                                         Cevap	                      Açıklama
+Nesneye özel bilgi saklamak mı istiyorsun?	                WeakMap	                obj => value eşleşmesi gerekir
+Sadece "bu nesne burada var mı?" diye mi kontrol edeceksin?	WeakSet             	Ek veri gerekmiyorsa WeakSet yeterlidir
+Otomatik temizlik önemli mi?	                              Her ikisi	Weak referanslar sayesinde GC tarafından silinirler
+Döngüyle veri gezmek gerekiyor mu?	                        ❌ Bunlar uygun değil	Map/Set tercih etmen gerekebilir
+*/
+
+/*🧭 WeakMap Metotları
+
+set(key, value)	Anahtar olarak bir nesne ver, ona karşılık bir değer sakla
+get(key)	Anahtar için saklanan değeri döndürür (yoksa undefined)
+has(key)	Anahtar WeakMap’te var mı? → true/false
+delete(key)	Belirtilen anahtarı ve ilişkili değeri siler
+
+
+
+🚦 WeakSet Metotları
+
+add(value)	Sadece nesne türünden bir öğe ekler
+has(value)	Belirtilen nesne WeakSet’te var mı? → true/false
+delete(value)	Belirtilen nesneyi WeakSet’ten siler
+*/
+
+/*
+Hem WeakMap hem de WeakSet şunlara sahip değildir:
+
+Metot /                Özellik	Neden yok?
+.size                 	Bellekte ne zaman silineceği belirsiz
+.keys(), .values()	    Aynı sebepten iterasyon yapılamaz
+forEach, for...of      Aynı şekilde içerik güvenilir değildir
+.clear()	          Bilerek eklenmemiştir (elle tümünü silmek için)
+
+*/
+
+
+/*
 let messages = [
   {text: "Hello", from: "John"},
   {text: "How goes?", from: "John"},
@@ -4345,8 +4635,7 @@ let options = {
   items: ["Item1", "Item2"]
 };
 
-// ...and it immediately expands it to variables
-function showMenu({title = "Untitled", width = 200, height = 100, items = []}) {
+  function showMenu({title = "Untitled", width = 200, height = 100, items = []}) {
   // title, items – taken from options,
   // width, height – defaults used
   alert( `${title} ${width} ${height}` ); // My Menu 200 100
