@@ -392,7 +392,8 @@ ziyaretçinin kafasının karışmamasını sağlamalıyız.
 1. <script async type="module"> Inline Script Ne Yapar?
 Normalde: Inline scriptler (yani <script>...</script>) HTML akışında hemen çalışır.
 type="module": Modül scriptleri, HTML tamamen yüklendikten sonra (deferred gibi) çalışır.
-async ile: <script async type="module"> yazarsanız, bu script ve içindeki import edilen modüller (ör: analytics.js) yüklendiği anda çalışır. Yani:
+async ile: <script async type="module"> yazarsanız, bu script ve içindeki import edilen 
+modüller (ör: analytics.js) yüklendiği anda çalışır. Yani:
 HTML’in tamamlanmasını beklemez.
 Diğer scriptlerin bitmesini beklemez.
 Import edilen dosyalar (ör: analytics.js) yüklendiği anda, script çalışır.
@@ -411,7 +412,8 @@ Ama script’in içindeki import edilen dosyalar (ör: analytics.js) yüklenmede
 Yani:
 Önce analytics.js dosyası yüklenir (import edilir).
 analytics.js yüklendiği anda, script’iniz (ve içindeki kod) çalışır.
-Bekleme: Script, sadece kendi import ettiği dosyaların yüklenmesini bekler. Ama HTML’in tamamlanmasını veya diğer scriptlerin bitmesini beklemez.
+Bekleme: Script, sadece kendi import ettiği dosyaların yüklenmesini bekler. Ama HTML’in
+ tamamlanmasını veya diğer scriptlerin bitmesini beklemez.
 
 */
 
@@ -884,14 +886,18 @@ exported under a name, without default.
 
 /*
 Re-export
-“Re-export” syntax export ... from ... allows to import things and immediately export them (possibly under another name), like this:
+“Re-export” syntax export ... from ... allows to import things and immediately 
+export them (possibly under another name), like this:
 
 export {sayHi} from './say.js'; // re-export sayHi
 
 export {default as User} from './user.js'; // re-export default
 Why would that be needed? Let’s see a practical use case.
 
-Imagine, we’re writing a “package”: a folder with a lot of modules, with some of the functionality exported outside (tools like NPM allow us to publish and distribute such packages, but we don’t have to use them), and many modules are just “helpers”, for internal use in other package modules.
+Imagine, we’re writing a “package”: a folder with a lot of modules, with some of
+ the functionality exported outside (tools like NPM allow us to publish and distribute
+  such packages, but we don’t have to use them), and many modules are just “helpers”, 
+  for internal use in other package modules.
 
 The file structure could be like this:
 

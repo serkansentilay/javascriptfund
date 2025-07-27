@@ -136,7 +136,8 @@
 //The default value also jumps in if the parameter exists, but strictly equals undefined, like this:
 
 //showMessage("Ann", undefined); // Ann: no text given
-//Here "no text given" is a string, but it can be a more complex expression, which is only evaluated and assigned if the parameter is missing. So, this is also possible:
+//Here "no text given" is a string, but it can be a more complex expression, 
+// which is only evaluated and assigned if the parameter is missing. So, this is also possible:
 
 // function showMessage(from, text = anotherFunction()) {
   // anotherFunction() only executed if no text given
@@ -176,7 +177,8 @@
  // ...
 //}
 
-//Modern JavaScript engines support the nullish coalescing operator ??, it’s better when most falsy values, such as 0, should be considered “normal”:
+//Modern JavaScript engines support the nullish coalescing operator ??, 
+// it’s better when most falsy values, such as 0, should be considered “normal”:
 
 // function showCount(count) {
   // if count is undefined or null, show "unknown"
@@ -396,7 +398,8 @@
 //Please note that the last line does not run the function, because there are no parentheses after sayHi. 
 //There are programming languages where any mention of a function name causes its execution, but JavaScript is 
 //not like that.
-//In JavaScript, a function is a value, so we can deal with it as a value. The code above shows its string representation, which is the source code.
+//In JavaScript, a function is a value, so we can deal with it as a value. The code above 
+// shows its string representation, which is the source code.
 //Surely, a function is a special value, in the sense that we can call it like sayHi().
 //But it’s still a value. So we can work with it like with other kinds of values.
 //We can copy a function to another variable:
@@ -543,6 +546,44 @@
 //For instance, let’s imagine that we need to declare a function welcome() depending on the age variable that 
 // we get during runtime. And then we plan to use it some time later.
 //If we use Function Declaration, it won’t work as intended:
+
+
+/*
+Hoisting (Belleğe Alma) Farkı
+
+// Function Declaration
+foo(); // ✅ çalışır
+function foo() {
+  console.log("I'm foo");
+}
+
+// Function Expression
+bar(); // ❌ hata
+let bar = function() {
+  console.log("I'm bar");
+};
+
+Çözüm: Function Expression Kullan
+
+let welcome;
+
+if (age > 18) {
+  welcome = function() {
+    console.log("Welcome adult");
+  };
+} else {
+  welcome = function() {
+    console.log("Hi kid");
+  };
+}
+
+welcome(); // ✅ Güvenli
+Neden daha iyi?
+welcome her durumda tanımlıdır.
+Fonksiyonlar if/else içinde atanır ama dışarıdan çağrılabilir.
+
+
+*/
 
 //let age = prompt("What is your age?", 18);
 // conditionally declare a function
@@ -1306,6 +1347,15 @@ Please note that the recursive solution actually does exactly the same: it follo
  outputs them.
 */
 
+
+
+
+//Kullanım Durumu	Kullanılacak Veri Yapısı
+//Eleman ekleme/silme sık olacaksa	Linked List
+//Sabit büyüklükte hızlı erişim lazımsa	Array
+//Önce giren önce çıksın (queue)	Linked List (Queue)
+//Sık geri alma / ileri alma varsa	Doubly Linked List
+
 //Rest parameters and spread syntax
 
 /*
@@ -1953,6 +2003,18 @@ army[5](); // 5
 
 //the old var
 
+
+/*
+❓ Neden hepsi 10 döndürüyor?
+
+var, function-scope'tadır, yani for bloğu içinde yeni bir i yaratmaz.
+Tüm shooter fonksiyonları aynı i değişkenini paylaşır.
+Döngü bittikten sonra i = 10 olur.
+Sonra her shooter çağrıldığında i zaten 10 olmuştur, onu gösterir.
+Yani fonksiyonlar oluşturulurken i = 0, i = 1 vs. gibi değerleri kopyalamaz, sadece referansı tutar.
+*/
+
+
 /*
 “var” has no block scope
 
@@ -1985,6 +2047,9 @@ The same thing for loops: var cannot be block- or loop-local:
 alert(i);   // 10, "i" is visible after loop, it's a global variable
 alert(one); // 1, "one" is visible after loop, it's a global variable
 If a code block is inside a function, then var becomes a function-level variable:
+
+
+
 
  function sayHi() {
   if (true) {
@@ -2028,7 +2093,8 @@ alert(user); // John
 
 var declarations are processed when the function starts (or script starts for globals).
 
-In other words, var variables are defined from the beginning of the function, no matter where the definition is (assuming that the definition is not in the nested function).
+In other words, var variables are defined from the beginning of the function, 
+no matter where the definition is (assuming that the definition is not in the nested function).
 
 So this code:
 
@@ -2321,7 +2387,8 @@ its execution. Variables are not function properties and vice versa. These are j
 */
 
 /*
-Function properties can replace closures sometimes. For instance, we can rewrite the counter function example from the chapter Variable scope, closure to use a function property:
+Function properties can replace closures sometimes. For instance, we can rewrite the counter
+ function example from the chapter Variable scope, closure to use a function property:
 
  function makeCounter() {
   // instead of:
@@ -2403,6 +2470,16 @@ func(); // Error, func is not defined (not visible outside of the function)
 */
 
 /*
+func(who) → isimli bir function expression.
+sayHi → bu fonksiyonun değişkene atanan ismi.
+Fonksiyonun kendi içinde func(...) şeklinde kendine referans verebilmesi için özel olarak func ismi verilmiş.
+Ama bu func fonksiyonun dışında görünmez, sadece içinde kullanılabilir.
+Yani func() dışarıdan çağrılmaya çalışılırsa hata verir.
+
+*/
+
+
+/*
 Why do we use func? Maybe just use sayHi for the nested call?
 
 Actually, in most cases we can:
@@ -2433,6 +2510,126 @@ welcome(); // Error, the nested sayHi call doesn't work any more!
 That happens because the function takes sayHi from its outer lexical environment. There’s no 
 local sayHi, so the outer variable is used. And at the moment of the call that outer sayHi is null.
 
+
+*/
+
+/*
+❌ Hata: sayHi null olduğu için içerdeki sayHi("Guest") çalışmaz
+🧠 Açıklama:
+Burada function(who) ifadesi anonim fonksiyondur, ismi yok.
+İçeride sayHi(...) çağırıyor ama bu aslında dışarıdaki sayHi değişkenine bakıyor.
+Eğer daha sonra sayHi = null yaparsan → dışarıdaki referans gittiği için içeri de bozulur.
+Bu, kırılgan bir yapıdır. İç referans dış ortama bağlıdır.
+
+*/
+
+
+/*
+1. Function Declaration (Fonksiyon Bildirimi)
+
+function sayHi(name) {
+  console.log(`Hello, ${name}`);
+}
+✅ Ne zaman tercih edilir?
+Kullanım Durumu	Neden Tercih Edilir
+Kodun üst kısmında veya global düzeyde tanım yapacaksan	Hoisting vardır, her yerden çağırılabilir
+Fonksiyon birden fazla yerde kullanılacaksa	Kodun okunabilirliği artar
+Recursive (kendi kendini çağıran) işlemler için uygundur	Fonksiyon adı sabittir, kolay kontrol edilir
+Test edilebilirliği artırmak istersen	Daha stabildir, globalde de tanımlanabilir
+❗️Dikkat:
+function tanımlamaları hoisted (yukarı çekilir), yani tanımlandığı yerden önce de çağrılabilir.
+Bu yüzden büyük projelerde beklenmedik davranışlara neden olabilir, dikkatli kullanılmalı.
+
+*/
+
+
+/*
+ 2. Function Expression (Fonksiyon İfadesi)
+
+let sayHi = function(name) {
+  console.log(`Hello, ${name}`);
+};
+✅ Ne zaman tercih edilir?
+Kullanım Durumu	Neden Tercih Edilir
+Fonksiyonu bir değişkene atamak istersen (özellikle closure yapılarında)	Daha esnek kullanım sağlar
+Fonksiyonları argüman olarak başka fonksiyona geçireceksen (callback)	Fonksiyon nesnesi gibi davranır
+Kod sıralaması önemliyse ve tanım-sonra-kullan yapacaksan	Hoisting yoktur, kod akışı nettir
+Daha sonra fonksiyonun değerini değiştireceksen	Değişken gibi kontrol edebilirsin
+❗️Dikkat:
+let sayHi = function() {} ifadesi hoisted değildir, önce tanım, sonra kullanım gerekir.
+SayHi dışarıdan silinirse (örnek: sayHi = null), fonksiyon erişilemez hale gelir.
+
+*/
+
+/*
+🔧 3. İsimli Function Expression
+
+let sayHi = function greet(name) {
+  console.log(`Hello, ${name}`);
+  // greet("Ali") → kendi kendine çağrı
+};
+✅ Ne zaman tercih edilir?
+Kullanım Durumu	Neden Tercih Edilir
+Fonksiyon kendini tekrar çağıracaksa (recursion)	İç referans dıştan bağımsız olur
+Fonksiyon bir değişkene atanıp daha sonra değiştirilecekse	Fonksiyon içeriden çalışmaya devam eder
+Hata ayıklamada (debug) fonksiyon ismini görmek istersen	Stack trace'te isim görünür
+❗️Dikkat:
+greet sadece fonksiyonun içinde geçerlidir.
+sayHi = null yapsan bile içindeki greet("...") çalışır.
+
+*/
+
+/*
+sayHi yerine greet kullanmazsak ne olur?
+
+let sayHi = function(name) {
+  if (name) {
+    console.log(`Hello, ${name}`);
+  } else {
+    sayHi("Guest"); // TEHLİKELİ
+  }
+};
+
+let welcome = sayHi;
+sayHi = null;
+
+welcome(); // ❌ sayHi içeride artık null, hata verir
+Çünkü burada fonksiyon içinde sayHi dışarıdan bağlanıyor, bu da tehlikeli!
+*/
+
+/*
+4. İsimsiz Function Expression (Anonymous Function)
+
+let sayHi = function(name) {
+  console.log(`Hello, ${name}`);
+};
+✅ Ne zaman tercih edilir?
+Kullanım Durumu	Neden Tercih Edilir
+Fonksiyon sadece 1 yerde kullanılacaksa	Gereksiz isim tanımlamaktan kaçınırsın
+Callbacks / event handlers için	Daha kısa ve sade
+IIFE (Immediately Invoked Function Expression) gibi yapılar için	Fonksiyonun bir adı gerekmez
+❗️Dikkat:
+İçeriden kendini tekrar çağırmak zordur (sayHi dış referansa bağlı olur).
+
+
+*/
+
+
+/*
+5. Arrow Function (ES6)
+
+const sayHi = (name) => {
+  console.log(`Hello, ${name}`);
+};
+✅ Ne zaman tercih edilir?
+Kullanım Durumu	Neden Tercih Edilir
+Kısa, tek satırlık işlemler	Daha okunabilir ve sade
+Callback veya inline fonksiyonlarda	Yazımı kolaydır
+this, arguments, super gibi keyword'lere ihtiyaç yoksa	Arrow function kendi this'ini bağlamaz
+Promise, map, filter, reduce gibi yapılar	Arrow daha uygundur
+❗️Dikkat:
+this bağlamı yoktur → event handler, class method, constructor gibi yerlerde kullanma.
+Recursive işlem yapacaksan tercih edilmez.
 
 */
 
@@ -2632,6 +2829,26 @@ function getFunc() {
 }
 
 getFunc()(); // error: value is not defined
+*/
+
+/*
+🔍 Ne Oluyor?
+let value = "test"; ➝ Bu değişken getFunc fonksiyonunun içindedir.
+Ama sonra şunu yapıyoruz:
+let func = new Function('alert(value)');
+Bu, yeni bir fonksiyon objesi oluşturur ama hiçbir lexical scope kullanmaz!
+🔥 Önemli Kural:
+new Function(...) ile oluşturulan fonksiyonlar her zaman global scope içinde çalışır.
+Yani:
+
+value değişkeni sadece getFunc() fonksiyonu içinde tanımlı.
+Ama new Function tarafından oluşturulan fonksiyon global scope’a bakar.
+Global scope’ta value yok.
+Dolayısıyla: ❌ ReferenceError: value is not defined
+*/
+
+
+/*
 Compare it with the regular behavior:
 
  function getFunc() {
@@ -2645,6 +2862,23 @@ Compare it with the regular behavior:
 getFunc()(); // "test", from the Lexical Environment of getFunc
 
 */
+
+/*
+🔍 Ne Oluyor?
+let value = "test"; yine burada da aynı.
+Ama fonksiyonu şöyle tanımlıyoruz:
+let func = function() {
+  alert(value);
+};
+Bu fonksiyon normal bir closure’dır.
+Tanımlandığı yerdeki lexical environment’ı (çevresini) hatırlar.
+Yani fonksiyon dönerken, value’yi yanında taşır.
+getFunc()() çağrıldığında:
+İçteki fonksiyon çalışır.
+value = "test" olan değeri görür ve ekrana basar.
+
+*/
+
 
 /*
 This special feature of new Function looks strange, but appears very useful in practice.
@@ -2747,12 +2981,35 @@ With arguments:
 setTimeout(sayHi, 1000, "Hello", "John"); // Hello, John
 If the first argument is a string, then JavaScript creates a function from it.
 
+/*
+🧠 1. setTimeout("alert('Hello')", 1000);
+
+Bu şekilde de çalışır. Çünkü:
+
+setTimeout fonksiyonuna string olarak "alert('Hello')" geçiliyor.
+JavaScript, bu stringi eval() gibi değerlendirir ve çalıştırır.
+Ama bu neden önerilmez?
+❌ Güvensiz: Eğer bu string dışarıdan geliyorsa (örneğin kullanıcıdan), XSS gibi güvenlik açıklarına neden olabilir.
+❌ Hatalı kod takibi: String içindeki kodlar debug sırasında görünmez.
+❌ Yavaş: JavaScript motoru stringi parse etmek zorunda kalır.
+
+*/
+
+/*
 So, this will also work:
 
  setTimeout("alert('Hello')", 1000);
 But using strings is not recommended, use arrow functions instead of them, like this:
 
  setTimeout(() => alert('Hello'), 1000);
+
+*/
+
+/*
+Bu bir arrow function (ok fonksiyonu).
+setTimeout fonksiyonun referansını alır.
+1000 ms sonra alert('Hello') çalıştırılır.
+Temiz, güvenli ve modern bir yazım şeklidir.
 
 */
 
@@ -2765,6 +3022,30 @@ setTimeout(sayHi(), 1000);
 That doesn’t work, because setTimeout expects a reference to a function. And here sayHi() 
 runs the function, and the result of its execution is passed to setTimeout. In our case the 
 result of sayHi() is undefined (the function returns nothing), so nothing is scheduled.
+*/
+
+
+/*
+🧠 2. Hatalı Kullanım: setTimeout(sayHi(), 1000);
+
+Neden yanlış?
+function sayHi() {
+  alert("Hi");
+}
+
+setTimeout(sayHi(), 1000); // ❌ HATALI
+sayHi() bu satırda hemen çalıştırılır.
+Fonksiyonun sonucu undefined döner çünkü alert() bir şey döndürmez.
+Dolayısıyla setTimeout(undefined, 1000) olur, yani hiçbir şey zamanlanmaz.
+
+*/
+
+/*
+✅ Doğru Kullanım:
+setTimeout(sayHi, 1000); // ✅ DOĞRU
+Burada sayHi() çağrılmaz, sadece referansı verilir.
+setTimeout 1 saniye bekledikten sonra kendi çağırır.
+
 */
 
 /*
@@ -2790,6 +3071,37 @@ additional methods.
 
 
 */
+
+/*
+
+setTimeout(...) çağrılıyor ve bir timer tanımlanıyor.
+Bu fonksiyonun dönüş değeri bir timer kimliği (ID) oluyor.
+Bu timerId, daha sonra clearTimeout(timerId) ile iptal ediliyor.
+Sonuç olarak: alert("never happens") çalışmaz.
+Bu satırda bir fonksiyon 1000 ms (1 saniye) sonra çalışmak üzere planlanıyor.
+Fonksiyon: () => alert("never happens")
+Geri dönen timerId bir sayı olur (tarayıcıda).
+alert(timerId); // Örnek: 1, 2, 3 gibi
+Bu ID'yi gösterir. Genelde sayı olur, ama platforma bağlıdır.
+Bu ID, setTimeout'un planladığı işlemi tanımlar.
+clearTimeout(timerId);
+Bu satırla işlemi iptal etmiş olursun.
+Artık zaman dolsa bile, alert("never happens") çalıştırılmaz.
+alert(timerId); // aynı ID yine gösterilir
+timerId değişkeni aynı kalır.
+clearTimeout() bu değeri değiştirmez.
+İptal sadece işlemin yapılmasını engeller.
+
+setTimeout(...) ile alert("never happens") adlı fonksiyon 1 saniye sonra çalışmak üzere planlanıyor.
+Ama hemen ardından:
+clearTimeout(timerId);
+ile bu zamanlama iptal ediliyor.
+Bu yüzden:
+Zamanlayıcı hiç devreye girmiyor,
+alert() çalıştırılmıyor.
+
+*/
+
 
 /*
 setInterval
@@ -2844,7 +3156,48 @@ The setTimeout above schedules the next call right at the end of the current one
 
 The nested setTimeout is a more flexible method than setInterval. This way the next call may be
  scheduled differently, depending on the results of the current one.
+*/
 
+/*
+Çünkü bu yöntem, setInterval’dan daha esnektir:
+🔁 setInterval şöyle çalışır:
+
+setInterval(tick, 2000);
+Bu durumda:
+
+Her 2 saniyede bir tick() çağrılır.
+Ama önceki çağrı tamamlanmamış olsa bile bir sonraki çalışır.
+Bu, gecikmelerde çakışmalara ve üst üste bindirmelere neden olabilir.
+🧠 setTimeout zinciri ise:
+
+Her çalışmadan sonra manuel olarak bir sonraki çalışmayı planlar.
+Böylece eğer işlem uzun sürerse, bir sonrakini daha sonra başlatabilirsin.
+Gerekirse süreyi değiştirebilir, hata varsa bekleyebilir, dinamik zamanlayabilirsin.
+
+*/
+
+/*
+ 🧪 Örnek Durum:
+
+Diyelim ki bir sunucudan veri alıyorsun, her 2 saniyede bir.
+
+function tick() {
+  fetch('/api/data')
+    .then(() => {
+      timerId = setTimeout(tick, 2000); // başarılıysa devam
+    })
+    .catch(() => {
+      timerId = setTimeout(tick, 5000); // hata varsa 5 saniye bekle
+    });
+}
+
+let timerId = setTimeout(tick, 2000);
+Görüyor musun? Bu esneklik setInterval'da yok. Orası sadece düz aralıklarla çalışır.
+
+
+*/
+
+/*
 For instance, we need to write a service that sends a request to the server every 5 seconds 
 asking for data, but in case the server is overloaded, it should increase the interval to 10,
  20, 40 seconds…
@@ -3034,7 +3387,29 @@ Using setInterval:
     current++;
   }, 1000);
 }
+*/
 
+/*
+🧠 Nasıl çalışır?
+current değişkeni başlangıç sayısını (from) tutar.
+setInterval her 1000 ms'de (1 saniye) bir çalışır.
+İçeride:
+alert(current) ile sayıyı gösterir.
+Eğer current == to, yani son sayıya ulaşıldıysa clearInterval(timerId) ile durdurur.
+Son olarak current++ ile sıradaki sayıya geçer.
+📌 Örnek çıktı:
+(1 saniyede bir)
+5
+6
+7
+8
+9
+10
+
+*/
+
+
+/*
 // usage:
 printNumbers(5, 10);
 Using nested setTimeout:
@@ -3053,10 +3428,26 @@ Using nested setTimeout:
 
 // usage:
 printNumbers(5, 10);
+/*
+
+/*
+🧠 Nasıl çalışır?
+İlk setTimeout fonksiyonu, 1 saniye sonra go() fonksiyonunu çağırır.
+go():
+Sayıyı gösterir,
+Eğer hâlâ to'ya ulaşılmadıysa kendini tekrar setTimeout ile 1 saniye sonra çağırır.
+current++ ile sıradaki sayıya geçilir.
+🔁 Yani:
+Bir fonksiyon kendi kendini setTimeout ile tekrar çağırıyor.
+Bu, setInterval’e göre daha esnek ve işlem bittiğinde otomatik gecikme sağlar (önceki iş bitmeden yenisi başlamaz).
+🚨 DİKKAT: Her iki yöntemde de ilk sayı 1 saniye sonra gösterilir.
+
+Çünkü hem setInterval hem de setTimeout gecikmeli başlar.
 
 
+*/
 
-
+/*
 Note that in both solutions, there is an initial delay before the first output. The function 
 is called after 1000ms the first time.
 
@@ -3082,6 +3473,16 @@ If we also want the function to run immediately, then we can add an additional c
 printNumbers(5, 10);
 */
 
+/*
+🧠 Ne farklı?
+go() fonksiyonu ilk başta hemen çağrılır.
+Böylece ilk sayı hemen gösterilir.
+Ardından setInterval her saniye go() fonksiyonunu çağırmaya başlar.
+🟢 Bu yöntemle:
+İlk sayı anında çıkar,
+Diğer sayılar 1 saniye aralıklarla gelir.
+
+*/
 
 /*
 In the code below there’s a setTimeout call scheduled, then a heavy calculation is run,
@@ -3345,6 +3746,25 @@ geçerli this (=worker) ve geçerli argümanı (=2) orijinal yönteme aktarır.
 */
 
 /*
+💬 func.call(this, x) Ne Demek?
+
+func.call(this, x);
+Şu anlama gelir:
+
+func fonksiyonunu çalıştır ama,
+this'i şu anki objeye (örneğin worker) eşitle,
+x de parametre olarak git.
+Örnek:
+function sayHi() {
+  alert(this.name);
+}
+
+let user = { name: "Serkan" };
+sayHi.call(user); // Serkan
+
+*/
+
+/*
 Going multi-argument
 
 Now let’s make cachingDecorator even more universal. Till now it was working only with 
@@ -3446,6 +3866,22 @@ orijinal fonksiyona iletmek için func.call(this, ...arguments) kullanır.
 
 */
 
+
+/*
+(*) let key = hash(arguments);
+
+arguments, fonksiyona gelen tüm argümanları içeren "array-like" bir yapıdır.
+Burada hash fonksiyonu bu argümanları kullanarak tek bir anahtar (key) oluşturur.
+Örnek: worker.slow(3, 5) → arguments = [3,5] → "3,5"
+(**) func.call(this, ...arguments);
+
+func.call(this, ...) sayesinde this bağlamı (örneğin worker) korunur.
+...arguments ile tüm gelen argümanlar orijinal fonksiyona gönderilir.
+Bu sayede slow(min, max) şeklindeki fonksiyon sorunsuz çalışır.
+
+*/
+
+
 /*
 func.apply
 
@@ -3489,7 +3925,39 @@ JavaScript motoru dahili olarak daha iyi optimize eder.
 
 Tüm argümanları bağlamla birlikte başka bir fonksiyona aktarmaya çağrı yönlendirme denir.
 Passing all arguments along with the context to another function is called call forwarding.
+*/
 
+//call: Argümanları tek tek alır.
+//apply: Argümanları dizi olarak alır.
+
+/*
+Neden apply kullanılır?
+
+Eğer argümanların zaten bir dizi veya arguments gibi bir yapıdaysa, apply daha uygundur.
+call(...args) için ... spread operatörüne ihtiyaç vardır.
+apply çoğu JavaScript motorunda biraz daha hızlı olabilir (dahili optimizasyonlar nedeniyle).
+*/
+
+/*
+🔁 Call Forwarding (Çağrı Yönlendirme)
+
+Yani bir fonksiyonu "sarmalayıcı" fonksiyon üzerinden, this ve gelen tüm argümanlarla birlikte çağırmak:
+
+let wrapper = function() {
+  return func.apply(this, arguments);
+};
+Bu kod:
+
+this’i kaybetmeden
+Tüm argümanları koruyarak
+Orijinal fonksiyonu çalıştırır
+🎯 Amaç:
+Kullanıcı dışarıdan wrapper() çağırdığında, sanki func() çağrılmış gibi davranır.
+
+
+*/
+
+/*
 let wrapper = function() {
   return func.apply(this, arguments);
 };
@@ -3521,7 +3989,7 @@ As of now, it works only on two arguments. It would be better if it could glue a
 
 The natural solution would be to use arr.join method:
 
-function hash(args) {
+func\tion hash(args) {
   return args.join();
 }
 …Unfortunately, that won’t work. Because we are calling hash(arguments), and arguments object 
@@ -3542,6 +4010,15 @@ Still, there’s an easy way to use array join:
 
 hash(1, 2);
 The trick is called method borrowing.
+*/
+
+/*
+
+📌 Açıklama:
+[].join.call(arguments) ifadesiyle, gerçek bir diziden join() metodu ödünç alınır.
+Bu metot, sadece this.length ve this[i] ile çalıştığı için, arguments gibi array-like yapılarla da uyumludur.
+🎓 Neden Bu Mümkün?
+Çünkü join() gibi yerleşik metotlar, herhangi bir "array-like" yapı ile çalışabilecek şekilde tasarlanmıştır.
 */
 
 /*
@@ -3603,6 +4080,18 @@ for (let args of work.calls) {
 //The wrapper returned by spy(f) should store all arguments and then use f.apply to forward 
 // the call.
 */
+/*
+📌 Ne yapıyor?
+spy fonksiyonu, verilen func fonksiyonunu sarıyor (wrap ediyor).
+Sarılmış fonksiyon (wrapper), her çağrıda gelen argümanları wrapper.calls adlı diziye kaydediyor.
+Sonra func.apply(this, args) ile asıl fonksiyonu çağırıyor.
+🎯 Amaç:
+Hangi argümanlarla kaç kez çağrıldığını takip etmek.
+🔍 Örnek Kullanım:
+Test yazarken, bir fonksiyonun doğru şekilde çağrılıp çağrılmadığını kontrol etmek için kullanılır.
+
+
+*/
 
 /*
 function delay(f, ms) {
@@ -3616,7 +4105,19 @@ function delay(f, ms) {
 let f1000 = delay(alert, 1000);
 
 f1000("test"); // shows "test" after 1000ms
+*/
 
+/*
+📌 Ne yapıyor?
+delay(f, ms) fonksiyonu, f fonksiyonunu sarıyor ve çağrısını ms milisaniye geciktiriyor.
+apply(this, arguments) ile this bağlamı ve gelen argümanlar korunuyor.
+📌 Neden arrow function?
+Çünkü arrow function kendi this ve arguments’ına sahip değildir.
+Bu yüzden dıştaki wrapper fonksiyonun this ve arguments değerlerini otomatik alır.
+
+*/
+
+/*
 Please note how an arrow function is used here. As we know, arrow functions do not have own 
 this and arguments, so f.apply(this, arguments) takes this and arguments from the wrapper.
 
@@ -3625,6 +4126,9 @@ If we pass a regular function, setTimeout would call it without arguments and th
 
 We still can pass the right this by using an intermediate variable, but that’s a little bit 
 more cumbersome:
+//🧪 Alternatif: Arrow function kullanmadan da yapılabilir
+
+
 function delay(f, ms) {
 
   return function(...args) {
@@ -3653,6 +4157,23 @@ function debounce(func, ms) {
     timeout = setTimeout(() => func.apply(this, arguments), ms);
   };
 }
+*/
+
+/*
+📌 Ne oluyor burada?
+Her çağrıldığında (örneğin kullanıcı yazı yazdı) önceki zamanlayıcı iptal ediliyor.
+Yeni bir setTimeout başlatılıyor.
+Eğer ms süresi (örneğin 1000ms) geçmeden tekrar çağrılırsa, önceki iptal edilip yenisi başlar.
+Yani en son çağrının üzerinden ms süresi geçince func çalışır.
+
+
+🕵️‍♂️ Ne Oluyor Bu Örnekte?
+Zaman (ms)            	Ne yapılıyor?	              Ne olur?
+0ms	                      f("a")	              zamanlayıcı başlar
+200ms	                  f("b")	                önceki iptal, yenisi başlar
+500ms	                      f("c")	              yine iptal, yeni başlatılır
+1500ms                  	⏰ 1000ms doldu	      sadece "c" çalıştırılır
+Yani kullanıcı yazmayı bırakana kadar hiçbir işlem yapılmaz. Bıraktığında son yazdığı işleme göre çalışır.
 */
 
 /*
@@ -3783,13 +4304,51 @@ function throttle(func, ms) {
 A call to throttle(func, ms) returns wrapper.
 
 During the first call, the wrapper just runs func and sets the cooldown state (isThrottled = true).
-In this state all calls are memorized in savedArgs/savedThis. Please note that both the context and the arguments are equally important and should be memorized. We need them simultaneously to reproduce the call.
-After ms milliseconds pass, setTimeout triggers. The cooldown state is removed (isThrottled = false) and, if we had ignored calls, wrapper is executed with the last memorized arguments and context.
-The 3rd step runs not func, but wrapper, because we not only need to execute func, but once again enter the cooldown state and setup the timeout to reset it.
+In this state all calls are memorized in savedArgs/savedThis. Please note that both the context 
+and the arguments are equally important and should be memorized. We need them simultaneously to 
+reproduce the call.
+After ms milliseconds pass, setTimeout triggers. The cooldown state is removed (isThrottled = false)
+ and, if we had ignored calls, wrapper is executed with the last memorized arguments and context.
+The 3rd step runs not func, but wrapper, because we not only need to execute func, but once again 
+enter the cooldown state and setup the timeout to reset it.
 
 
 */
 
+
+/*
+🎬 Adım Adım Örnekle Ne Olur?
+
+function f(a) {
+  console.log(a);
+}
+let f1000 = throttle(f, 1000);
+
+f1000(1); // hemen çalışır → 1
+f1000(2); // saklanır (1000ms geçmediği için)
+f1000(3); // en son bu saklanır, 2 unutulur
+
+// 1000ms sonra → tekrar çalışır → 3
+*/
+
+/*
+ Throttle vs Debounce Karşılaştırması
+
+Özellik	                debounce	                            throttle
+Ne zaman çalışır?	En son çağrıdan sonra ms kadar bekler	       İlk çağrı hemen, sonra en fazla ms'de bir
+Kullanım senaryosu	Yazı bittikten sonra işlem (örneğin arama)	  Scroll, mousemove, resize gibi hızlı olaylar
+Son değer çalışır mı?	✅ Evet	                                ✅ Evet (bu throttle bunu destekliyor)
+
+
+
+throttle(func, ms) fonksiyonu, func'ı en fazla ms milisaniyede bir çalıştırır.
+İlk çağrıda hemen çalışır.
+Diğer çağrılar bloklanır ama sonuncusu saklanır.
+setTimeout ile ms sonra sonuncu çağrı yeniden çalıştırılır.
+
+*/
+
+/*
 
 
 //funciton binding
@@ -3843,7 +4402,17 @@ setTimeout(function() {
 }, 1000);
 Now it works, because it receives user from the outer lexical environment, and then calls the 
 method normally.
+*/
 
+/*
+✔️ Avantajı:
+user.sayHi() çağrısı, ok fonksiyonu içinde çağrıldığı için user'ı bulabiliyor.
+⚠️ Dezavantaj:
+user objesi 1 saniye içinde değişirse, sayHi artık başka bir nesnenin fonksiyonu olabilir.
+
+*/
+
+/*
 The same, but shorter:
 
 setTimeout(() => user.sayHi(), 1000); // Hello, John!
@@ -3883,7 +4452,8 @@ The basic syntax is:
 
 // more complex syntax will come a little later
 let boundFunc = func.bind(context);
-The result of func.bind(context) is a special function-like “exotic object”, that is callable as function and transparently passes the call to func setting this=context.
+The result of func.bind(context) is a special function-like “exotic object”, that is 
+callable as function and transparently passes the call to func setting this=context.
 
 In other words, calling boundFunc is like func with fixed this.
 
@@ -3900,6 +4470,31 @@ function func() {
 let funcUser = func.bind(user);
 funcUser(); // John
 Here func.bind(user) is a “bound variant” of func, with fixed this=user.
+*/
+
+/*
+func.bind(context) bir yeni fonksiyon döndürür.
+Bu fonksiyon her çağrıldığında this, verdiğin context olur.
+Yani func'un bağlamı sabitlenmiş olur.
+*/
+
+//Artık sayHi, her nerede çağrılırsa çağrılsın, this daima user olacak.
+/*
+bind, argümanları da aktarır
+let user = {
+  firstName: "John",
+  say(phrase) {
+    alert(`${phrase}, ${this.firstName}!`);
+  }
+};
+
+let say = user.say.bind(user);
+
+say("Hello"); // ✅ Hello, John!
+say("Bye");   // ✅ Bye, John!
+*/
+
+/*
 
 All arguments are passed to the original func “as is”, for instance:
 
@@ -3954,6 +4549,79 @@ let say = user.say.bind(user);
 say("Hello"); // Hello, John! ("Hello" argument is passed to say)
 say("Bye"); // Bye, John! ("Bye" is passed to say)
 */
+
+/*  
+Fonksiyon	    Ne işe yarar?   	                        Kullanım Durumu             	Avantaj	    Dezavantaj
+setTimeout	Belirli süre sonra bir fonksiyon çalıştırır	-Zaman gecikmeli işlemler	-Basit kullanımlı	-this bağlamı kaybolabilir
+bind	this bağlamını sabitler	     -                 Callback fonksiyonlarda bağlamın korunması-	Güvenli this	-Yeni fonksiyon döndürür
+Wrapper (arrow function)	Geçici olarak this’i doğru şekilde kullanmanı sağlar -	setTimeout(() => user.sayHi()) gibi durumlar	-Kısa yazım	--Referans objesi değişirse bozulabilir
+spy(func)	Fonksiyonun kaç kere ve nasıl çağrıldığını takip eder	Debug, test, log	-Tüm çağrıları izler	--Performans etkisi olabilir
+delay(func, ms)	Fonksiyonu belirtilen süre sonra çalıştırır	Kısa erteleme işlemleri	-Kolayca geciktirme sağlar	-setTimeout zaten benzer işi yapar
+debounce(func, ms)	Sürekli çağrılan bir fonksiyonu, son çağrıdan sonra ms gecikme ile çalıştırır	-Input, search gibi durumlar-	Gereksiz tekrarları engeller	-Kullanıcı alışkanlığına göre gecikme olabilir
+throttle(func, ms)	Fonksiyonu en fazla ms sürede bir kez çalıştırır-	Mouse hareketleri, scroll gibi sürekli olaylar	-Performansı iyileştirir-	Bazı son değerleri atlayabilir
+
+*/
+
+
+/*
+1. setTimeout
+Kullan: Zaman gecikmesi istiyorsan.
+Örnek: Uyarıyı 2 saniye sonra göster.
+Dikkat: this kaybolur → çözüm olarak bind ya da wrapper kullanılır.
+setTimeout(user.sayHi, 1000); // ❌
+setTimeout(() => user.sayHi(), 1000); // ✔️
+setTimeout(user.sayHi.bind(user), 1000); // ✔️
+
+*/
+
+/*
+2. bind()
+Kullan: Fonksiyonu başka bir yere göndereceksen (setTimeout, eventListener, vs).
+Örnek: sayHi fonksiyonunu başka bir yere bağla, ama this user kalsın.
+let sayHi = user.sayHi.bind(user);
+setTimeout(sayHi, 1000); // ✔️ her zaman doğru context
+*/
+
+/*
+. Wrapper (Arrow Function)
+Kullan: Fonksiyon geçici olarak bağlamını korusun ama obje değişmeyecekse.
+Örnek: setTimeout(() => user.sayHi(), 1000);
+Dikkat: 1 saniye içinde user değişirse bu çözüm işe yaramaz!
+
+*/
+
+/*
+4. spy(func)
+Kullan: Bir fonksiyonun kaç kere ve hangi argümanlarla çağrıldığını kaydetmek için.
+Örnek: Test, debug, analiz
+let wrapped = spy(myFunc);
+wrapped(1, 2);
+console.log(wrapped.calls); // [[1, 2]]
+*/
+
+/*
+ 5. delay(func, ms)
+Kullan: Bir fonksiyonun çalışmasını basitçe geciktirmek istiyorsan.
+Örnek: delay(alert, 1000)("Hello"); → 1 sn sonra uyarı
+
+*/
+
+/*
+6. debounce(func, ms)
+Kullan: Kullanıcı bir şey yazarken sürekli fonksiyon çağırmak yerine, yazmayı bitirdikten sonra çağırmak için.
+Örnek: Arama kutusu, input event
+let onInput = debounce(() => fetchSearch(), 300);
+input.addEventListener("input", onInput);
+*/
+
+/*
+7. throttle(func, ms)
+Kullan: Sürekli çalışan işlemlerde (scroll, mousemove) fonksiyonun çok sık çalışmasını engellemek için.
+Örnek: Sayfa scroll'da pozisyonu göstermek ama performansı korumak
+let onScroll = throttle(() => updatePosition(), 100);
+window.addEventListener("scroll", onScroll);
+*/
+
 
 /*
 Convenience method: bindAll
@@ -4047,7 +4715,20 @@ Like this:
     return func.call(this, ...argsBound, ...args);
   }
 }
+*/
 
+/*
+partial fonksiyonu, iki şeyi alıyor:
+func: orijinal fonksiyon (örneğin user.say)
+...argsBound: önceden sabitlemek istediğimiz bazı argümanlar (örneğin saat/dakika gibi)
+partial fonksiyonu, yeni bir wrapper fonksiyon döndürüyor (satır (*)), bu wrapper:
+Çağrıldığında aldığı ...args argümanlarını
+argsBound ile birlikte, orijinal func fonksiyonuna geçiriyor.
+func.call(this, ...) ile çağrıldığı için this bağlamı korunuyor! Yani func içinde this o anki çağrının bağlamı oluyor.
+
+*/
+
+/*
 // Usage:
 let user = {
   firstName: "John",
@@ -4071,6 +4752,18 @@ So easy to do it with the spread syntax, right?
 
 Also there’s a ready _.partial implementation from lodash library.
 
+
+*/
+
+/*
+Çağrı ve Sonuç
+user.sayNow("Hello");
+sayNow çağrıldığında, aslında aşağıdaki gibi çalışıyor:
+user.say.call(user, "10:00", "Hello");
+Yani, this bağlamı user olarak kalıyor,
+İlk argüman olarak "10:00" (kısmi sabitlenmiş),
+İkinci argüman olarak da "Hello" geçiyor.
+Sonuç alert olarak şöyle gösterilir:
 
 */
 
@@ -4279,6 +4972,29 @@ There’s a subtle difference between an arrow function => and a regular functio
 .bind(this) creates a “bound version” of the function.
 The arrow => doesn’t create any binding. The function simply doesn’t have this. The lookup of 
 this is made exactly the same way as a regular variable search: in the outer lexical environment.
+*/
+
+/*
+Arrow fonksiyon sadece dış this'i almak istediğinde kullanılır
+
+Mesela, içinde başka bir fonksiyon kullanıyorsun ve oradaki this'i dış fonksiyonun this'iyle aynı yapmak istiyorsan:
+
+let user = {
+  name: 'John',
+  sayHi() {
+    let inner = () => {
+      console.log(this.name); // burada 'this' user objesine işaret eder
+    };
+    inner();
+  }
+};
+
+user.sayHi(); // 'John'
+Burada:
+
+sayHi normal fonksiyon, this user objesi.
+inner ise arrow function, kendi this yok, dış sayHi'nin this'ini kullanıyor.
+
 */
 
 /*

@@ -187,6 +187,24 @@ The proxy should totally replace the target object everywhere. No one should eve
 the target object after it got proxied. Otherwise it’s easy to mess up.
 */
 
+
+/*
+Bu çok önemli. Şunu yapıyor:
+
+dictionary artık gerçek nesne değil, onun Proxy'si. Artık herkes bunu kullanmalı.
+📛 Eğer biri hâlâ eski (proxy'siz) dictionary'yi kullanırsa, get interceptor çalışmaz. Bu yüzden:
+
+✅ Proxy nesnesi, orijinal nesneyi tamamen "yerine geçecek şekilde" kullanılır.
+💡 Ne İçin Kullanılır?
+
+Otomatik çevriler / varsayılan değerler
+Erişim denetimi (get, set gibi metodlarla)
+Logger/debug araçları (her erişim, yazma işlemini takip etmek)
+Reactive/observable veri yapıları (örneğin Vue.js gibi framework'lerde)
+
+*/
+
+
 /*
 Validation with “set” trap
 Let’s say we want an array exclusively for numbers. If a value of another type is added, there should be an error.
@@ -289,9 +307,13 @@ user = new Proxy(user, {
 });
 
 alert( Object.keys(user) ); // <empty>
-Why? The reason is simple: Object.keys returns only properties with the enumerable flag. To check for it, it calls the internal method [[GetOwnProperty]] for every property to get its descriptor. And here, as there’s no property, its descriptor is empty, no enumerable flag, so it’s skipped.
+Why? The reason is simple: Object.keys returns only properties with the enumerable flag.
+ To check for it, it calls the internal method [[GetOwnProperty]] for every property to 
+ get its descriptor. And here, as there’s no property, its descriptor is empty, no enumerable flag, so it’s skipped.
 
-For Object.keys to return a property, we need it to either exist in the object, with the enumerable flag, or we can intercept calls to [[GetOwnProperty]] (the trap getOwnPropertyDescriptor does it), and return a descriptor with enumerable: true.
+For Object.keys to return a property, we need it to either exist in the object, with the 
+enumerable flag, or we can intercept calls to [[GetOwnProperty]] (the trap getOwnPropertyDescriptor
+ does it), and return a descriptor with enumerable: true.
 
 Here’s an example of that:
 
@@ -320,7 +342,8 @@ Let’s note once again: we only need to intercept [[GetOwnProperty]] if the pro
 
 /*
 Protected properties with “deleteProperty” and other traps
-There’s a widespread convention that properties and methods prefixed by an underscore _ are internal. They shouldn’t be accessed from outside the object.
+There’s a widespread convention that properties and methods prefixed by an 
+underscore _ are internal. They shouldn’t be accessed from outside the object.
 
 Technically that’s possible though:
 
@@ -636,12 +659,22 @@ user = new Proxy(user, {
   get(target, prop, receiver) {
     alert(`GET ${prop}`);
     return Reflect.get(target, prop, receiver); // (1)
+    //Bu, target[prop] gibi çalışır ama:
+  //getter fonksiyonu varsa doğru şekilde çağırır
+  //Prototip zincirinde arama yapar
+  //this bağlamını (receiver) doğru aktarır
   },
   set(target, prop, val, receiver) {
     alert(`SET ${prop}=${val}`);
     return Reflect.set(target, prop, val, receiver); // (2)
+  //target[prop] = val gibidir ama:
+  //setter varsa onu çağırır
+  //this bağlamı yine korunur
+  //Hata fırlatmaz, başarılıysa true, değilse false döner
+
   }
 });
+//Her okuma (get) ve yazma (set) işlemi "yakalanır" ve ekrana bilgi mesajı verilir.
 
 let name = user.name; // shows "GET name"
 user.name = "Pete"; // shows "SET name=Pete"
@@ -658,6 +691,160 @@ Reflect.get(target, prop, receiver) can be replaced by target[prop]. There are i
 
 
 */
+
+
+/*
+Proxy, JavaScript'teki bir nesneye yapılan işlemleri yakalamaya (intercept) ve özelleştirmeye yarayan bir yapıdır.
+
+target: İzlemek istediğin gerçek nesne.
+handler: Hangi işlemleri yakalamak istiyorsan, o işlemleri tanımladığın nesne.
+
+let user = { name: "Serkan" };
+
+let proxy = new Proxy(user, {
+  get(target, prop) {
+    console.log(`GET ${prop}`);
+    return target[prop];
+  },
+  set(target, prop, value) {
+    console.log(`SET ${prop} = ${value}`);
+    target[prop] = value;
+    return true;
+  }
+});
+
+console.log(proxy.name);      // 👉 GET name → Serkan
+proxy.name = "Ahmet";         // 👉 SET name = Ahmet
+*/
+
+/*
+Reflect nesnesi, JavaScript'in dahili işlemlerini manuel olarak çağırmana izin verir. Proxy trap'leri içinde çok kullanılır.
+
+✨ Avantajları:
+this bağlamını doğru kullanır
+Prototip zincirini korur
+Hataları bastırmak yerine düzgün sonuç verir (true/false)
+Standart ve güvenli bir yol
+Reflect vs Doğrudan Erişim
+
+🔴 Bu tehlikeli olabilir:
+get(target, prop) {
+  return target[prop]; // Doğrudan erişim
+}
+getter varsa this bağlamı bozulabilir
+Proxy'nin hedefini doğru yansıtmayabilir
+✅ Doğrusu:
+get(target, prop, receiver) {
+  return Reflect.get(target, prop, receiver);
+}
+receiver: çağıranın bağlamı (Proxy olabilir)
+Reflect, bu bağlamı doğru şekilde kullanır
+
+
+Daha Detaylı Örnek: Erişimi Engelleme
+
+let user = {
+  name: "Serkan",
+  password: "123456"
+};
+
+let proxy = new Proxy(user, {
+  get(target, prop) {
+    if (prop === 'password') {
+      throw new Error("Access Denied!");
+    }
+    return Reflect.get(target, prop);
+  }
+});
+
+console.log(proxy.name);     // Serkan
+console.log(proxy.password); // ❌ Error: Access Denied!
+
+
+🔐 Derin Güvenlik: Sadece belirli alanlara izin ver
+
+function createRestrictedObject(obj, allowedFields) {
+  return new Proxy(obj, {
+    get(target, prop) {
+      if (!allowedFields.includes(prop)) {
+        throw new Error(`Field "${prop}" is not allowed.`);
+      }
+      return Reflect.get(target, prop);
+    }
+  });
+}
+
+let user = { name: "Ali", age: 30, salary: 10000 };
+let publicUser = createRestrictedObject(user, ["name", "age"]);
+
+console.log(publicUser.name);   // ✅ Ali
+console.log(publicUser.salary); // ❌ Error
+
+*/
+
+/*
+apply ve construct Trap’leri
+
+Fonksiyon çağrısı izlemek:
+function sayHi(name) {
+  return `Hello, ${name}`;
+}
+
+let proxyFunc = new Proxy(sayHi, {
+  apply(target, thisArg, args) {
+    console.log(`Calling function with args: ${args}`);
+    return Reflect.apply(target, thisArg, args);
+  }
+});
+
+proxyFunc("Serkan"); // 👉 "Calling function with args: Serkan"
+*/
+
+/*
+eğer burada target[prop] deseydik, this doğrudan target olurdu.
+
+Ama Reflect.get(..., receiver) sayesinde this doğru şekilde proxy olur ve getter düzgün çalışır.
+
+🧪 Bu Örnekte Neler Oluyor?
+
+Senin örnekte:
+
+Her get ve set işlemi loglanıyor (alert ile gösteriliyor)
+Ama Reflect sayesinde özellik erişimi hala düzgün çalışıyor
+Yani: izliyoruz ama bozmuyoruz — "şeffaf müdahale"
+
+*/
+
+
+/*
+Evet, basit senaryolarda if ile bu kontrolleri manuel olarak yapabiliriz.
+❗Ama Proxy ve Reflect, kontrolü merkezi hâle getirir, genelleştirir ve otomatikleştirir.
+ Özellikle büyük uygulamalarda, kapsamlı veri yapılarında veya framework geliştirirken fark yaratır.
+
+ 1. İf Yapısı ile Kontrol (manuel)
+let user = { name: "Serkan", password: "123" };
+
+if (user.password) {
+  throw new Error("Access Denied");
+}
+Avantaj: Basit.
+Dezavantaj:
+Her erişim noktasında tek tek kontrol yazmalısın.
+Eğer 10 farklı yerde user.password okunuyorsa → 10 yerde if yazman gerekir.
+Biri unutursa? → Güvenlik açığı.
+2. Proxy ile Otomatik Kontrol
+let protectedUser = new Proxy(user, {
+  get(target, prop) {
+    if (prop === 'password') throw new Error("No access");
+    return Reflect.get(target, prop);
+  }
+});
+Artık kim protectedUser.password derse, kontrol otomatik çalışır.
+if unutulamaz. Çünkü kontrol, merkeze (proxy) alınmıştır.
+Kod tekrarını sıfıra indirir.
+
+*/
+
 
 /*
 Proxying a getter
@@ -818,7 +1005,9 @@ proxy.set('test', 1); // Error
 Internally, a Map stores all data in its [[MapData]] internal slot. The proxy doesn’t have
  such a slot. The built-in method Map.prototype.set method tries to access the internal 
  property this.[[MapData]], but because this=proxy, can’t find it in proxy and just fails.
-Burada hata çıkar çünkü proxy.set çağrıldığında, this artık proxy nesnesi olur. Ancak proxy'nin içinde [[MapData]] internal slot'u yoktur. Map.prototype.set metodu, this.[[MapData]]'ya erişmeye çalışır ve bulamaz, bu yüzden hata fırlatır.
+Burada hata çıkar çünkü proxy.set çağrıldığında, this artık proxy nesnesi olur. Ancak proxy'nin
+ içinde [[MapData]] internal slot'u yoktur. Map.prototype.set metodu, this.[[MapData]]'ya erişmeye 
+ çalışır ve bulamaz, bu yüzden hata fırlatır.
 Bu problemi aşmak için, Proxy'nin get tuzağında fonksiyonları orijinal nesneye (target) bağlamamız gerekir
 
 Fortunately, there’s a way to fix it:
@@ -896,6 +1085,70 @@ does not use [[Get]]/[[Set]] when accessing them.
 
 In the call getName() the value of this is the proxied user, and it doesn’t have 
 the slot with private fields.
+
+//❓ Neden hata?
+//this.#name → burada this, aslında artık orijinal User değil, proxy objesi.
+//Private alanlar (#name) sadece tanımlandığı orijinal nesne içinde erişilebilir.
+//Proxy bu iç yapıyı taşımıyor. Yani:
+//getName() içindeki this.#name → undefined internal slot erişmeye çalışıyor → HATA.
+//🔍 Teknik Detay: Private Field nasıl çalışır?
+//Private field'lar (#name) JS'te özel bir şekilde, [[PrivateField]] internal slot içinde tutulur. Bu yüzden:
+//this.#name
+//➡ sadece this doğrudan orijinal sınıfa aitse çalışır. Proxy bu alanlara erişemez çünkü kendi içeriğinde o slot yok.
+
+/*
+2. Çözüm: bind(target)
+
+user = new Proxy(user, {
+  get(target, prop, receiver) {
+    let value = Reflect.get(...arguments);
+    return typeof value == 'function' ? value.bind(target) : value;
+  }
+});
+Bu ne yapar?
+
+Eğer user[prop] bir fonksiyonsa (örneğin getName),
+Onu orijinal nesne (target)’e bağlar, yani:
+value.bind(target)
+Bu sayede:
+
+this // artık orijinal "user"
+Ve this.#name düzgün çalışır.
+
+
+
+🧨 Sakınca ne?
+Sen bu şekilde metodu bağlayınca (bind(target)):
+
+Artık kullanıcı target'ı dışarıya sızdırabilir.
+Örnek:
+
+let fn = user.getName;
+let leakedUser = fn(); // aslında orijinal user'a bağlı!
+Bu durum:
+
+Proxy’nin amacını bozar
+Güvenlik, izolasyon, loglama gibi şeyleri kırar
+
+
+Basit senaryolarda → bind çözümü işini görür.
+Güvenlik/izolasyon çok önemliyse → #private alanlarla proxy'yi birlikte kullanmak önerilmez.
+
+*/
+
+/*
+Private Field’lar neden böyle çalışıyor?
+Çünkü ECMAScript spesifikasyonuna göre:
+
+Private alanlar lexical (söz dizimsel) olarak tanımlandığı sınıfa bağlıdır
+Ve [[Get]] / get trap’i üzerinden çalışmazlar
+Bu performans ve güvenlik için tercih edilmiştir
+
+*/
+
+
+/*
+
 
 Once again, the solution with binding the method makes it work:
 
@@ -986,6 +1239,10 @@ Here’s an example:
 };
 
 let {proxy, revoke} = Proxy.revocable(object, {});
+//Proxy.revocable(...) metodu çağrılır.
+//Bu, sana iki şey döner:
+//proxy: Kullanılabilir proxy nesnesi
+//revoke: Bu fonksiyonu çağırırsan, proxy geçersiz (revoked) olur.
 
 // pass the proxy somewhere instead of object...
 alert(proxy.data); // Valuable data
@@ -1003,6 +1260,25 @@ leaving revoke in the current scope.
 
 We can also bind revoke method to proxy by setting proxy.revoke = revoke.
 
+revoke() Çağrılır
+revoke();
+Bu noktada:
+
+Proxy içindeki bağlantılar koparılır
+Artık proxy hiçbir işlemi gerçekleştiremez
+Her işlem bir TypeError fırlatır
+
+*/
+
+
+/*
+🧠 Konunun Temel Amacı Nedir?
+
+Geçici (revocable) bir Proxy oluşturmak ve istediğimiz zaman bu proxy’nin işlevini sonlandırmak.
+Bu, özellikle:
+
+Güvenlik hassas uygulamalarda
+Geçici yetkilendirme / yetki iptali gibi durumlarda işine yarar.
 
 */
 
@@ -1137,6 +1413,31 @@ Reflect.get(target, 2, receiver) çağrılır.
 target[2] yani 3 döner.
 6. alert(array[-1]);
 Sonuç: 3 ekrana basılır.
+
+
+*/
+
+/*
+🧠 Neden Reflect.get kullanıldı?
+
+Alternatif olarak target[prop] yazabilirdik. Ama:
+
+✅ Reflect.get(target, prop, receiver) avantajları:
+Getter varsa doğru this ile çalıştırır
+Proxy ile gelen receiver bilgisini korur
+Daha sağlam, daha standart yöntemdir (özellikle class/prototype içeriği olan karmaşık yapılarda)
+Proxy içinde Reflect kullanmak → "doğru davranışı aynen devam ettir" demektir.
+❓Peki Bunu Proxy Kullanmadan Yapamaz mıyız?
+
+🟥 Evet, yapamazsın doğrudan array[-1] ile.
+
+Çünkü:
+
+let arr = [1, 2, 3];
+console.log(arr[-1]); // undefined
+JavaScript -1 indeksini özellik olarak saklar ama dizi elemanı olarak saymaz.
+
+Proxy ile ise bu davranışı özelleştirebilirsin.
 
 
 */
@@ -1431,6 +1732,25 @@ Let’s curry it!
 log = _.curry(log);
 After that log works normally:
 
+/*
+Lodash Ne İşe Yarar?
+
+Şunlar için çok kullanılır:
+
+İşlem Türü	Lodash Fonksiyonları
+Dizi işlemleri	_.map, _.filter, _.flatten, _.uniq
+Nesne işlemleri	_.get, _.set, _.cloneDeep
+Fonksiyon kontrolü	_.debounce, _.throttle, _.curry, _.once
+Karşılaştırma	_.isEqual, _.isEmpty, _.isNaN
+String işlemleri	_.camelCase, _.capitalize, _.kebabCase
+
+
+_.curry(fn) fonksiyonu, bir fonksiyonu parça parça (kademeli) çağırabileceğin hale getirir.
+
+
+*/
+
+/*
 log(new Date(), "DEBUG", "some debug"); // log(a, b, c)
 …But also works in the curried form:
 
@@ -1463,6 +1783,10 @@ Advanced curry implementation
 In case you’d like to get in to the details, here’s the “advanced” curry implementation 
 for multi-argument functions that we could use above.
 
+
+//Currying, çok argüman alan bir fonksiyonu, her seferinde bir veya birkaç argüman alan parçalara bölmektir.
+
+
 It’s pretty short:
 
 function curry(func) {
@@ -1491,6 +1815,33 @@ alert( curriedSum(1)(2,3) ); // 6, currying of 1st arg
 alert( curriedSum(1)(2)(3) ); // 6, full currying
 The new curry may look complicated, but it’s actually easy to understand.
 
+/*
+ 1. func nedir?
+Currying yapılacak orijinal fonksiyon (örneğin sum).
+
+🔹 2. curried(...args)
+Bu, dönen fonksiyon. İlk çağrıda verilen argümanları alır.
+
+🔹 3. if (args.length >= func.length)
+Eğer yeterli sayıda argüman verilmişse (sum 3 argüman alıyorsa ve args.length >= 3 ise),
+→ func.apply(this, args) çağrılır ve sonuç döner.
+Yani bu çağrı "tamamlandı, artık sonucu döndür" anlamına gelir.
+🔹 4. Else: argümanlar eksikse
+Yeni bir fonksiyon döndürülür:
+Yeni gelen argümanlar (args2) eskilerle birleştirilir.
+Tekrar curried fonksiyonu çağrılır (recursive gibi düşün).
+Bu, gerekli sayıya ulaşana kadar devam eder.
+
+
+ Avantajı Ne?
+
+Fonksiyonlara ön tanımlı değerler verebilirsin.
+Daha yeniden kullanılabilir fonksiyonlar üretirsin.
+Özellikle event handling, logging, middleware gibi yapılarda çok işe yarar.
+
+*/
+
+/*
 The result of curry(func) call is the wrapper curried that looks like this:
 
 // func is the function to transform
@@ -1523,6 +1874,8 @@ By definition, currying should convert sum(a, b, c) into sum(a)(b)(c).
 But most implementations of currying in JavaScript are advanced, as described: they also
  keep the function callable in the multi-argument variant.
 
+//El yazımı curry: Öğrenmek ve küçük işler için ideal. Ama eksik yönleri var.
+//Lodash _.curry: Üretim için güçlü, kararlı ve esnek bir çözüm. Tavsiye edilir.
 
 */
 
@@ -2401,11 +2754,28 @@ function weakRefCache(fetchImg) {
     return newImg;
   };
 }
+//fetchImg(imgName) ile yeni img yüklenir.
+//WeakRef(newImg) ile cache’e eklenir.
+//FinalizationRegistry'ye register() edilerek, silindiğinde tetikleme ayarlanır.
+
+
 
 const getCachedImg = weakRefCache(fetchImg);
 To manage the cleanup of “dead” cache entries, when the associated WeakRef objects are 
 collected by the garbage collector, we create a FinalizationRegistry cleanup registry.
 
+/*
+✅ WeakRef
+JavaScript’te bir nesneye zayıf (weak) referans oluşturur.
+Yani bu nesne çöp toplayıcı (GC) tarafından kullanılmıyorsa temizlenebilir.
+Ama hâlâ .deref() ile erişilebilir, eğer silinmediyse.
+✅ FinalizationRegistry
+GC (Garbage Collector) bir nesneyi sildiğinde otomatik olarak bildirim göndermek için kullanılır.
+Belirli bir nesne silindiğinde, sana haber verir → sen de onunla ilgili diğer şeyleri 
+temizlersin (örneğin cache'den silmek gibi).
+*/
+
+/*
 The important point here is, that in the cleanup callback, it should be checked, if the 
 entry was deleted by the garbage collector and not re-added, in order not to delete a “live” entry.
 

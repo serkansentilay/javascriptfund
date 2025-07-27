@@ -75,6 +75,13 @@ the action is completed.
 */
 
 /*
+callback fonksiyonu, script başarıyla yüklendikten sonra çağrılır.
+script.onload: Bu event, <script> etiketi içindeki dosya yüklendiğinde tetiklenir.
+
+*/
+
+
+/*
 Here’s a runnable example with a real script:
 
  function loadScript(src, callback) {
@@ -131,7 +138,18 @@ loadScript('/my/script.js', function(script) {
 So, every new action is inside a callback. That’s fine for few actions, but not good for
  many, so we’ll see other variants soon.
 */
-
+/*
+Burada her script, bir önceki tamamen yüklendikten sonra yükleniyor.
+Çünkü script.onload callback’i içinde diğer loadScript çağrılıyor.
+Bu yönteme “callback hell” veya “pyramid of doom” denir. Kod iç içe girer, okunabilirlik düşer.
+Terim	                              Açıklama
+document.createElement('script')	Yeni bir <script> etiketi oluşturur.
+script.src = '...'	Script'in nereden yükleneceğini belirler.
+document.head.append(script)	Script sayfaya eklenir, yükleme başlar.
+script.onload = () => ...	Script yüklendiğinde çalışacak kod bloğu.
+callback	Script yüklendikten sonra yapılacak işlemleri barındırır.
+asenkron	İşlem başlar ama sonucu hemen gelmez; beklemeden diğer kodlar çalışır.  
+*/
 /*
 Handling errors
 
@@ -392,7 +410,9 @@ The properties state and result of the Promise object are internal. We can’t d
 /*
 Consumers: then, catch
 
-A Promise object serves as a link between the executor (the “producing code” or “singer”) and the consuming functions (the “fans”), which will receive the result or error. Consuming functions can be registered (subscribed) using the methods .then and .catch.
+A Promise object serves as a link between the executor (the “producing code” or “singer”)
+ and the consuming functions (the “fans”), which will receive the result or error. Consuming 
+ functions can be registered (subscribed) using the methods .then and .catch.
 
 then
 
@@ -463,7 +483,7 @@ The call .catch(f) is a complete analog of .then(null, f), it’s just a shortha
 /*
 Cleanup: finally
 
-Just like there’s a finally clause in a regular try {...} catch {...}, there’s finally 
+Just like  there’s a finally clause in a regular try {...} catch {...}, there’s finally 
 in promises.
 
 The call .finally(f) is similar to .then(f, f) in the sense that f runs always, when the 
@@ -2070,6 +2090,16 @@ a promise. Other values are wrapped in a resolved promise automatically.
 
 For instance, this function returns a resolved promise with the result of 1; let’s test it:
 
+/*
+async kelimesi, bir fonksiyonun her zaman bir Promise döndüreceğini garanti eder.
+
+Yani, normalde bir fonksiyondan return 1; dersek bu doğrudan 1 döner.
+Ama async ile yazarsan, bu değer otomatik olarak Promise.resolve(1) haline gelir.
+
+
+*/
+
+/*
  async function f() {
   return 1;
 }
@@ -2086,8 +2116,30 @@ So, async ensures that the function returns a promise, and wraps non-promises in
 Simple enough, right? But not only that. There’s another keyword, await, that works only 
 inside async functions, and it’s pretty cool.
 
+/*
+şu şekilde işler:
 
+f() çağrıldığında, JavaScript bu fonksiyondan dönen değeri otomatik olarak 
+Promise.resolve(1) şeklinde sarar.
+Yani f() aslında şunu döner:
+Promise.resolve(1)
+Bu yüzden .then(alert) çalışır ve ekrana 1 yazar.
+
+
+Aynı fonksiyonu açıkça Promise döndürerek de yazabilirsin:
+async function f() {
+  return Promise.resolve(1);
+}
+Bu versiyon da tamamen aynıdır. Çünkü async fonksiyonlar zaten döndüğün her değeri
+ otomatik olarak bir Promise haline getirir.
+
+await sadece async fonksiyonların içinde kullanılabilir.
+
+Görevi, bir Promise'in çözülmesini beklemek ve sonucunu almak.
+
+Ör
 */
+
 
 /*
 Await
@@ -2767,6 +2819,30 @@ function allOrAggregateError(promises) {
 }
 */
 
+/*
+Özellik
+customPromiseAll	
+İlk hatada durur mu?	✅ Evet, hemen reject
+Hataları döndürür mü?	❌ Sadece ilk hatayı döner	
+Başarıları döndürür mü?	✅ Evet
+Hangi durumlar için ideal?	Hızlı başarısızlık yeterliyse
+
+
+customPromiseAllWait
+İlk hatada durur mu?	❌ Hayır, hepsini bekler
+Hataları döndürür mü?	❌ Sadece ilk hatayı döner
+Başarıları döndürür mü?	✅ Evet
+Hangi durumlar için ideal? Her işlemi tamamlamak gerekliyse ama sadece ilk hataya bakılacaksa
+
+
+allOrAggregateError
+❌ Hayır, hepsini bekler
+✅ Tüm hataları döner (AggregateError)
+✅ Evet
+Tüm işlemler önemliyse, tüm hatalar görülmek isteniyorsa
+
+*/
+
 //Generators
 /*
 Regular functions return only one, single value (or nothing).
@@ -3163,11 +3239,13 @@ passes a value into the generator, that becomes the result of the current
 /*
 generator.throw
 
-As we observed in the examples above, the outer code may pass a value into the generator, as the result of yield.
+As we observed in the examples above, the outer code may pass a value into 
+the generator, as the result of yield.
 
 …But it can also initiate (throw) an error there. That’s natural, as an error is a kind of result.
 
-To pass an error into a yield, we should call generator.throw(err). In that case, the err is thrown in the line with that yield.
+To pass an error into a yield, we should call generator.throw(err). In that case, 
+the err is thrown in the line with that yield.
 
 For instance, here the yield of "2 + 2 = ?" leads to an error:
 
@@ -3238,6 +3316,8 @@ it can be useful when we want to stop generator in a specific condition.
 
 
 */
+
+//Generator, JavaScript'te çalışması durdurulup sonra kaldığı yerden devam ettirilebilen özel fonksiyonlardır.
 
 /*
 Generators are created by generator functions function* f(…) {…}.
@@ -3383,6 +3463,9 @@ All we need to do is to perform a few replacements in the code above:
 
         // note: we can use "await" inside the async next:
         await new Promise(resolve => setTimeout(resolve, 1000)); // (3)
+      //Bu, JavaScript'te çok yaygın bir teknik: "uyutma" (sleep / delay) yapmak için kullanılır.
+      //Yani bu satırda program 1 saniyeliğine durur.
+
 
         if (this.current <= this.last) {
           return { done: false, value: this.current++ };
@@ -3440,11 +3523,14 @@ It’s also the case for for..of: the syntax without await needs Symbol.iterator
 /*
 Recall generators
 
-Now let’s recall generators, as they allow to make iteration code much shorter. Most of the time, when we’d like to make an iterable, we’ll use generators.
+Now let’s recall generators, as they allow to make iteration code much shorter. Most of 
+the time, when we’d like to make an iterable, we’ll use generators.
 
-For sheer simplicity, omitting some important stuff, they are “functions that generate (yield) values”. They are explained in detail in the chapter Generators.
+For sheer simplicity, omitting some important stuff, they are “functions that generate 
+(yield) values”. They are explained in detail in the chapter Generators.
 
-Generators are labelled with function* (note the star) and use yield to generate a value, then we can use for..of to loop over them.
+Generators are labelled with function* (note the star) and use yield to generate a value, 
+then we can use for..of to loop over them.
 
 This example generates a sequence of values from start to end:
 
@@ -3712,6 +3798,8 @@ next() return value is	              {value:…, done: true/false}	      Promise
 In web-development we often meet streams of data, when it flows chunk-by-chunk. For instance, 
 downloading or uploading a big file.
 We can use async generators to process such data. It’s also noteworthy that in some 
-environments, like in browsers, there’s also another API called Streams, that provides special interfaces to work with such streams, to transform the data and to pass it from one stream to another (e.g. download from one place and immediately send elsewhere).
+environments, like in browsers, there’s also another API called Streams, that provides 
+special interfaces to work with such streams, to transform the data and to pass it from 
+one stream to another (e.g. download from one place and immediately send elsewhere).
 */
 

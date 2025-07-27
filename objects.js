@@ -84,6 +84,14 @@
 //alert( bag.apple ); // 5 if fruit="apple"
 //that works the same as:
 
+//prompt() ile kullanıcıdan bir meyve ismi (örn. "apple", "banana") alıyoruz.
+//Kare parantez [] içinde yazılan ifade değerlendirilerek özellik adı haline gelir.
+//Örneğin fruit = "apple" ise [fruit] ifadesi "apple" olur.
+//Sonuçta bag.apple = 5 gibi bir özellik tanımlanmış olur.
+//nesne şu şekilde görünür:
+//  "apple": 5
+
+
 //let fruit = prompt("Which fruit to buy?", "apple");
 //let bag = {};
 
@@ -417,7 +425,21 @@
 //alert(user.name); // John
 //user.name = "Pete"; // Error
 
-//Normally, a built-in toString for objects is non-enumerable, it does not show up in for..in. But if we add a toString of our own, then by default it shows up in for..in, like this:
+//__proto__ özel bir property olduğu için burada işler karışır.
+// Gerçek değerini kaydetmek için Map kullanılmalı.
+
+
+/*
+Özellik		true olduğunda	                                    false olduğunda
+value         -	          -
+writable	user.name = "Ali" çalışır	                            user.name = "Ali" işlemez
+enumerable		Döngülerde ve keys'de çıkar	                     Görünmez
+configurable		delete user.name ve defineProperty çalışır	      Silinemez ve değiştirilemez
+*/
+
+
+//Normally, a built-in toString for objects is non-enumerable, it does not show up in for..in.
+//  But if we add a toString of our own, then by default it shows up in for..in, like this:
 
 // let user = {
 //  name: "John",
@@ -644,6 +666,8 @@
 //for (let code in codes) {
 //  alert(code); // 1, 41, 44, 49
 //}
+//integerler artan sekilde siralaniyor 
+//digerleri normal olustugu sira ile siralaniyor
 
 
 // Number(...) explicitly converts to a number
@@ -679,6 +703,9 @@
 //for (let code in codes) {
 //  alert( +code ); // 49, 41, 44, 1
 //}
+//integerler artan sekilde siralaniyor 
+//basinda + oldugu icin string olarak kabul ediliyor olustugu sirayla siralaniyor
+//digerleri normal olustugu sira ile siralaniyor
 
 
 //Object references and copying
@@ -762,6 +789,11 @@ constant, it must always reference the same object, but properties of that objec
 change.
 In other words, the const user gives an error only if we try to set user=... as a whole.
 */
+//Burada user değişkenine yeni bir nesne atamıyoruz.
+//Sadece nesnenin içindeki "name" özelliğini değiştiriyoruz.
+//Bu referansı değiştirmediği için, const kuralını ihlal etmez.
+
+
 
 //Cloning and merging, Object.assign
 //So, copying an object variable creates one more reference to the same object.
@@ -844,6 +876,25 @@ console.log(target);
 
 console.log(returnedTarget === target);
 // Expected output: true
+*/
+
+/*
+Çünkü Object.assign(...) fonksiyonu, orijinal target nesnesine kopyalama yapar ve aynı nesneyi döner.
+
+Yani şu tamamen aynı nesnedir:
+
+const obj = {};
+const ref1 = obj;
+const ref2 = obj;
+
+console.log(ref1 === ref2); // true
+Benzer şekilde:
+
+const returnedTarget = Object.assign(target, source);
+
+// Hem returnedTarget hem target aynı nesneyi gösterir:
+console.log(returnedTarget === target); // true ✅
+
 */
 
 
@@ -1085,7 +1136,8 @@ alert(obj === objCopy); // false (not same reference)
 obj.d = 4;
 alert(JSON.stringify(obj)); // {"a":1,"b":2,"c":3,"d":4}
 alert(JSON.stringify(objCopy)); // {"a":1,"b":2,"c":3}
-This way of copying an object is much shorter than let objCopy = Object.assign({}, obj) or for an array let arrCopy = Object.assign([], arr) so we prefer to use it whenever we can.
+This way of copying an object is much shorter than let objCopy = Object.assign({}, obj)
+ or for an array let arrCopy = Object.assign([], arr) so we prefer to use it whenever we can.
 
 */
 
@@ -1189,6 +1241,17 @@ user.sizes.width = 60;    // change a property from one place
 alert(clone.sizes.width); // 50, not related
 The structuredClone method can clone most data types, such as objects, arrays, primitive values.
 
+//Bu, birinci seviye kopyalama yapar (name, sizes gibi).
+//Ama sizes bir nesne olduğu için referans kopyalanır.
+//Yani user.sizes === clone.sizes → true
+//user.sizes.width = 60;
+//console.log(clone.sizes.width); // 60 ✅ çünkü aynı nesne
+//Problem:
+/Bu kopya “yüzeysel”dir.
+//İç içe nesneler (nested objects) paylaşılır → bağımsız değildir.
+
+
+
 It also supports circular references, when an object property references the object itself 
 (directly or via a chain or references).
 
@@ -1204,9 +1267,15 @@ alert(clone.me === clone); // true
 As you can see, clone.me references the clone, not the user! So the circular reference was 
 cloned correctly as well.
 
-Although, there are cases when structuredClone fails.
+//structuredClone() tüm iç içe özellikleri yeniden kopyalar
+//Artık clone.sizes ve user.sizes tamamen ayrı nesnelerdir.
 
-For instance, when an object has a function property:
+//structuredClone() kendi kendine referans veren (circular reference) nesneleri de klonlayabilir.
+//Bu özellik çoğu manuel klonlama yönteminde eksiktir.
+
+
+//Although, there are cases when structuredClone fails.
+//For instance, when an object has a function property:
 
  // error
 structuredClone({
@@ -1214,10 +1283,23 @@ structuredClone({
 });
 Function properties aren’t supported.
 
+//Çünkü structuredClone() sadece veri klonlar.
+//Fonksiyonlar, Date, RegExp, Map, Set gibi bazı özel nesnelerde sınırlamalar vardır.
+
+
 To handle such complex cases we may need to use a combination of cloning methods, write custom 
 code or, to not reinvent the wheel, take an existing implementation, for instance _.cloneDeep(obj)
  from the JavaScript library lodash.
 */
+
+//Eğer structuredClone() yeterli değilse veya eski tarayıcı desteği gerekiyorsa:
+//import _ from 'lodash';
+//const clone = _.cloneDeep(user);
+//Lodash’in cloneDeep() fonksiyonu da deep cloning yapar.
+//Ayrıca daha fazla esneklik sağlar (örneğin özel türleri klonlamak gibi).
+
+
+
 
 /*
 Objects are assigned and copied by reference. In other words, a variable stores not the 
@@ -1500,7 +1582,8 @@ If we used this.name instead of user.name inside the alert, then the code would 
 /*
 “this” is not bound
 
-In JavaScript, keyword this behaves unlike most other programming languages. It can be used in any function, even if it’s not a method of an object.
+In JavaScript, keyword this behaves unlike most other programming languages. 
+It can be used in any function, even if it’s not a method of an object.
 
 There’s no syntax error in the following example:
 
@@ -1674,7 +1757,8 @@ Kodumuzu geleceğe hazır ve anlaşılması daha kolay hale getirmek için küre
 /*
 Arrow functions have no “this”
 
-Arrow functions are special: they don’t have their “own” this. If we reference this from such a function, it’s taken from the outer “normal” function.
+Arrow functions are special: they don’t have their “own” this. If we reference this from
+ such a function, it’s taken from the outer “normal” function.
 
 For instance, here arrow() uses this from the outer user.sayHi() method:
 
@@ -1785,7 +1869,7 @@ alert( calculator.mul() );
 */
 
 /*
-eturn the object itself from every call.
+return the object itself from every call.
 
  let ladder = {
   step: 0,
@@ -1879,7 +1963,7 @@ future reuse.
 
 */
 
-//new target
+//new target.
 /*
 Inside a function, we can check whether it was called with new or without it, using a special new.target property.
 
@@ -1923,7 +2007,8 @@ Probably not a good thing to use everywhere though, because omitting new makes i
 /*
 Return from constructors
 
-Usually, constructors do not have a return statement. Their task is to write all necessary stuff into this, and it automatically becomes the result.
+Usually, constructors do not have a return statement. Their task is to write all 
+necessary stuff into this, and it automatically becomes the result.
 
 But if there is a return statement, then the rule is simple:
 
@@ -2260,7 +2345,8 @@ alert(id1 == id2); // false
 
 /*
 Symbols don’t auto-convert to a string
-Most values in JavaScript support implicit conversion to a string. For instance, we can alert almost any value, and it will work. Symbols are special. They don’t auto-convert.
+Most values in JavaScript support implicit conversion to a string. For instance, 
+we can alert almost any value, and it will work. Symbols are special. They don’t auto-convert.
 
 For instance, this alert will show an error:
 
@@ -2271,7 +2357,8 @@ alert(id); // TypeError: Cannot convert a Symbol value to a string
 
 
 /*
-That’s a “language guard” against messing up, because strings and symbols are fundamentally different and should not accidentally convert one into another.
+That’s a “language guard” against messing up, because strings and symbols are fundamentally 
+different and should not accidentally convert one into another.
 
 If we really want to show a symbol, we need to explicitly call .toString() on it, like here:
 
@@ -2287,9 +2374,11 @@ alert(id.description); // id
 /*
 “Hidden” properties
 
-Symbols allow us to create “hidden” properties of an object, that no other part of code can accidentally access or overwrite.
+Symbols allow us to create “hidden” properties of an object, that no other
+ part of code can accidentally access or overwrite.
 
-For instance, if we’re working with user objects, that belong to a third-party code. We’d like to add identifiers to them.
+For instance, if we’re working with user objects, that belong to a third-party
+ code. We’d like to add identifiers to them.
 
 Let’s use a symbol key for it:
 
@@ -2356,6 +2445,39 @@ let user = {
   [id]: 123 // not "id": 123
 };
 That’s because we need the value from the variable id as the key, not the string “id”.
+*/
+
+
+/*
+🔒 Symbol ile "gizli" özellikler ekleme
+
+Symbol’ların en önemli kullanım alanı: bir nesneye gizli (çakışma riski 
+olmayan) bir özellik eklemektir.
+
+Senaryo:
+Sen bir yazılım geliştiriyorsun ama user nesnesi başka bir kütüphaneye veya 
+yazılıma ait. Ona bir şey eklemek istiyorsun ama user.id gibi standart bir
+ şey eklersen, başka bir yazılım tarafından ezilebilir.
+
+Çözüm: Symbol kullanmak.
+
+let user = {
+  name: "John"
+};
+
+let id = Symbol("id"); // özel ve gizli bir anahtar
+
+user[id] = 1; // sadece bu Symbol ile erişilebilen bir özellik
+
+console.log(user[id]); // 1
+Bu şekilde kimse farkında bile olmadan, kullanıcı nesnesine özel bir bilgi eklemiş 
+oluyorsun. Çünkü id bir string değil, Symbol. Yani başka biri aynı açıklama ile 
+bir Symbol oluştursa bile seninle aynı olmaz:
+
+let id1 = Symbol("id");
+let id2 = Symbol("id");
+
+console.log(id1 === id2); // false
 */
 
 /*
@@ -2546,10 +2668,94 @@ kütüphane, yerleşik işlev ve sözdizimi yapısı bu yöntemleri kullanmaz.
 
 /*
 "string"
-For an object-to-string conversion, when we’re doing an operation on an object that expects a string, like alert:
+For an object-to-string conversion, when we’re doing an operation 
+on an object that expects a string, like alert:
 
 // output
 alert(obj);
+
+/** 
+JavaScript’te nesneler (object) bazı durumlarda string, number ya da boolean gibi 
+ilkel (primitive) değerlere otomatik olarak dönüştürülür.
+
+Bu otomatik dönüşüm 3 yerde olur:
+Bir nesne ekrana yazdırılırken (örneğin alert(obj))
+Matematiksel işlemlerde (+obj, obj * 2 vs.)
+Karşılaştırmalarda (obj == 1, obj > otherObj)
+
+
+1. Symbol.toPrimitive varsa, onu çağırır:
+obj[Symbol.toPrimitive](hint)
+En özelleştirilmiş yöntemdir.
+hint parametresi "string", "number" ya da "default" olabilir.
+Örnek:
+
+let user = {
+  name: "Serkan",
+  age: 30,
+
+  [Symbol.toPrimitive](hint) {
+    console.log("hint:", hint);
+    if (hint === "string") {
+      return this.name;
+    } else {
+      return this.age;
+    }
+  }
+};
+
+console.log(String(user)); // "Serkan"
+console.log(user + 10);    // 40 (30 + 10)
+2. Symbol.toPrimitive yoksa, hinte göre sıralama yapılır:
+Eğer hint === "string" ise:
+
+1. obj.toString()
+2. obj.valueOf()
+Eğer hint === "number" veya "default" ise:
+
+1. obj.valueOf()
+2. obj.toString()
+🎯 Örnek: Symbol.toPrimitive olmadan
+let user = {
+  name: "Serkan",
+  age: 30,
+  toString() {
+    return this.name;
+  },
+  valueOf() {
+    return this.age;
+  }
+};
+
+console.log(String(user)); // "Serkan"  → string hint → toString()
+console.log(Number(user)); // 30        → number hint → valueOf()
+console.log(user + 5);     // 35        → default hint → valueOf()
+🧪 Örnek: Hint Türüne Göre Farklı Davranış
+let obj = {
+  toString() {
+    return "hello";
+  },
+  valueOf() {
+    return 100;
+  }
+};
+
+console.log(String(obj)); // "hello"  → string hint
+console.log(Number(obj)); // 100      → number hint
+console.log(obj + 1);     // 101      → default hint
+⏳ Tarihsel İstisna: Date Objesi
+
+let date = new Date();
+console.log(+date);      // zaman damgası (timestamp)
+console.log(date + "");  // tarih string'i
+Date objeleri "default" hint aldığında string gibi davranır, bu JavaScript’in
+eski kararlarından biridir. Diğer tüm objeler "default"’te sayı gibi davranır.
+
+
+
+*/
+
+/*
 
 // using object as a property key
 anotherObj[obj] = 123;
@@ -2652,7 +2858,8 @@ As we can see from the code, user becomes a self-descriptive string or a money a
 // [object Object].
 
 /*
-For instance, here user does the same as above using a combination of toString and valueOf instead of Symbol.toPrimitive:
+For instance, here user does the same as above using a combination of 
+toString and valueOf instead of Symbol.toPrimitive:
 
  let user = {
   name: "John",
@@ -3077,7 +3284,8 @@ These methods are rarely used in practice.
 /*
 Getters and setters
 
-Accessor properties are represented by “getter” and “setter” methods. In an object literal they are denoted by get and set:
+Accessor properties are represented by “getter” and “setter” methods. 
+In an object literal they are denoted by get and set:
 
 let obj = {
   get propName() {
